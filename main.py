@@ -1,6 +1,7 @@
 import pygame
 from gato import Gato
 from coletavel import Coletavel
+from random import randint
 pygame.init()
 screen = pygame.display.set_mode((600, 400))
 x = 100
@@ -14,13 +15,16 @@ running = True
 todas_as_sprites = pygame.sprite.Group()
 cat = Gato()
 #criando os objetos coletáveis.
-peixe = Coletavel(500, 300, 0, 0, 255)
-peixe2 = Coletavel(800, 250, 0, 0, 255)
-la = Coletavel(850, 300, 255, 0, 0)
+x_peixe = randint(x*2,600)
+y_peixe = randint(250,300)
+x_la = randint(x*2+1, 800)
+y_la = randint(250, 300)
+peixe = Coletavel(x_peixe, y_peixe, 0, 0, 255)
+la = Coletavel(x_la, y_la, 255, 0, 0)
 font = pygame.font.SysFont(None, 36)
 contador = [0,0]
 
-todas_as_sprites.add(cat, peixe, peixe2, la)
+todas_as_sprites.add(cat, peixe, la)
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -45,20 +49,37 @@ while running:
         vel_y = 0
     camera_x = x - 300   
     camera_y = y - 200 
-
     cat.rect.topleft = (x - camera_x, y - camera_y)
     peixe.rect.topleft = (peixe.x - camera_x, peixe.y - camera_y)
-    peixe2.rect.topleft = (peixe2.x - camera_x, peixe2.y - camera_y)
     la.rect.topleft = (la.x - camera_x, la.y - camera_y)
 
    #colisão coletavel 
     if cat.rect.colliderect(peixe.rect):
         peixe.peixe(contador)
-    if cat.rect.colliderect(peixe2.rect):
-        peixe2.peixe(contador)
+        if contador[0] < 3:
+            x_peixe_anterior = x_peixe
+            novo_x_min = x_peixe_anterior + 100
+            novo_x_max = novo_x_min + 400
+            x_peixe = randint(novo_x_min, novo_x_max)
+            y_peixe = randint(250, 300)
+            peixe = Coletavel(x_peixe, y_peixe, 0, 0, 255)
+            todas_as_sprites.add(peixe)
+        else:
+            peixe.rect.x = -5000 
+            peixe.rect.y = -5000
     if cat.rect.colliderect(la.rect):
-        la.la(contador) 
-
+        la.la(contador)
+        if contador[1] < 2:
+            x_la_anterior = x_la
+            novo_x_min = x_la_anterior + 100
+            novo_x_max = novo_x_min + 400
+            x_la = randint(novo_x_min, novo_x_max)
+            y_la = randint(250, 300)
+            la = Coletavel(x_la, y_la, 255, 0, 0)
+            todas_as_sprites.add(la)
+        else:
+            la.rect.x = -5000
+            la.rect.y = -5000
     screen.fill((255, 255, 255))
     pygame.draw.rect(screen, (0, 255, 0), (0 - camera_x, chao_y + 50 - camera_y, 1200, 100))  
 
