@@ -25,6 +25,23 @@ font = pygame.font.SysFont(None, 36)
 contador = [0,0]
 
 todas_as_sprites.add(cat, peixe, la)
+
+#Configuração do Chão
+camera_x_inicial = x - 300
+largura_bloco = 400
+lista_chaos = []
+cor1 = (0, 255, 0)
+cor2 = (255, 255, 0)
+cor3 = (255, 0, 0)
+lista_cores_disponiveis = [cor1, cor2, cor3]
+
+for i in range(4):
+    pos_x_real = camera_x_inicial + (i * largura_bloco)
+    rect = pygame.Rect(pos_x_real, chao_y + 50, largura_bloco, 600)
+    cor_atual = lista_cores_disponiveis[i % 3]
+    lista_chaos.append([rect, cor_atual])
+#Fim configuração do chão
+
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -81,8 +98,29 @@ while running:
             la.rect.x = -5000
             la.rect.y = -5000
     screen.fill((255, 255, 255))
-    pygame.draw.rect(screen, (0, 255, 0), (0 - camera_x, chao_y + 50 - camera_y, 1200, 100))  
 
+    #Processo de construção do chão
+    ultimo_dado = lista_chaos[-1]
+    ultimo_rect = ultimo_dado[0]
+    ultima_cor = ultimo_dado[1]
+    while ultimo_rect.right - camera_x < 800:
+        novo_rect = pygame.Rect(ultimo_rect.right, chao_y + 50, largura_bloco, 600)
+        indice_atual = lista_cores_disponiveis.index(ultima_cor)
+        proximo_indice = (indice_atual + 1) % 3
+        nova_cor = lista_cores_disponiveis[proximo_indice]
+        novo_dado = [novo_rect, nova_cor]
+        lista_chaos.append(novo_dado)
+        ultimo_dado = novo_dado
+        ultimo_rect = novo_dado[0]
+        ultima_cor = novo_dado[1]
+    if lista_chaos[0][0].right - camera_x < -400:
+        lista_chaos.pop(0)
+    for dado in lista_chaos:
+        rect = dado[0]
+        cor = dado[1]
+        pygame.draw.rect(screen, cor, (rect.x - camera_x, rect.y - camera_y, largura_bloco, 600))
+    #Fim de construção do chão
+     
     texto = font.render(f"Peixes: {contador[0]}", True, (0,0,0))
     screen.blit(texto, (10,10))
     texto2 = font.render(f"Lã: {contador[1]}", True,(0,0,0) )
