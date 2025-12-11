@@ -1,5 +1,6 @@
 import pygame
 from gato import Gato
+from coletavel import Coletavel
 pygame.init()
 screen = pygame.display.set_mode((600, 400))
 x = 100
@@ -11,6 +12,12 @@ clock = pygame.time.Clock()
 running = True
 todas_as_sprites = pygame.sprite.Group()
 cat = Gato()
+#criando os objetos coletáveis.
+peixe = Coletavel(500, 300)
+peixe2 = Coletavel(800, 250)
+la = Coletavel(850, 300)
+
+
 todas_as_sprites.add(cat)
 while running:
     for event in pygame.event.get():
