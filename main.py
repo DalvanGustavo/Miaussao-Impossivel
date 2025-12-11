@@ -8,6 +8,7 @@ y = 100
 vel_y = 0
 gravidade = 0.8
 chao_y = 300
+forca_pulo = -15
 clock = pygame.time.Clock()
 running = True
 todas_as_sprites = pygame.sprite.Group()
@@ -24,6 +25,10 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                if y >= chao_y:
+                    vel_y = forca_pulo
     keys = pygame.key.get_pressed()
     if keys[pygame.K_RIGHT]:
         x += 3
@@ -31,8 +36,6 @@ while running:
     elif keys[pygame.K_LEFT]:
         x -= 3
         cat.andar_esquerda()
-    elif keys[pygame.K_UP]:
-        y -= 15
     else:
         cat.parado()
     vel_y += gravidade
