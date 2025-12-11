@@ -13,13 +13,13 @@ running = True
 todas_as_sprites = pygame.sprite.Group()
 cat = Gato()
 #criando os objetos coletáveis.
-peixe = Coletavel(500, 300)
-peixe2 = Coletavel(800, 250)
-la = Coletavel(850, 300)
+peixe = Coletavel(500, 300, 0, 0, 255)
+peixe2 = Coletavel(800, 250, 0, 0, 255)
+la = Coletavel(850, 300, 255, 0, 0)
 font = pygame.font.SysFont(None, 36)
 contador = [0,0]
 
-todas_as_sprites.add(cat)
+todas_as_sprites.add(cat, peixe, peixe2, la)
 while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
