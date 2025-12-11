@@ -1,7 +1,7 @@
 import pygame
 from gato import Gato
-from peixe import coletavel1
-from peixe import coletavel2
+from coletaveis import coletavel1
+from coletaveis import coletavel2
 
 
 pygame.init()
@@ -23,9 +23,7 @@ la = coletavel2(850, 300) #teste do coletável 2
 todas_as_sprites.add(cat, peixe, peixe2, la)
 
 
-contador = [0]  # Usando uma lista para permitir mutabilidade dentro do método collect
-contador_la = [0]
-
+contador = [0,0]  # Usando uma lista para permitir mutabilidade dentro do método collect
 
 font = pygame.font.SysFont(None, 36)
 
@@ -65,7 +63,7 @@ while running:
     if cat.rect.colliderect(peixe2.rect):
         peixe2.collect(contador)
     if cat.rect.colliderect(la.rect):
-        la.collect(contador_la)
+        la.collect(contador)
 
 
 
@@ -74,12 +72,11 @@ while running:
     todas_as_sprites.draw(screen)
     todas_as_sprites.update()
 
-
     #HUD:
 
     texto = font.render(f"Peixes: {contador[0]}", True, (0,0,0))
     screen.blit(texto, (10,10))
-    texto2 = font.render(f"Lã: {contador_la[0]}", True,(0,0,0) )
+    texto2 = font.render(f"Lã: {contador[1]}", True,(0,0,0) )
     screen.blit(texto2,(200,10))
     clock.tick(60)
 

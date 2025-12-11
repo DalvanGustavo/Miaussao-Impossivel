@@ -10,13 +10,13 @@ class coletavel1(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 
-        self.coletado = False  # ← flag para evitar print repetido
+        self.coletado = False  # flag para evitar print repetido
 
     def collect(self, contador):
         if not self.coletado:
             self.coletado = True
             contador[0] += 1  # Incrementa o contador
-            print(f"Peixe coletado! {contador[0]}")  # só será chamado uma vez
+            print(f"Peixe coletado! {contador[0]}")  
             self.kill()
 
 class coletavel2(pygame.sprite.Sprite):
@@ -29,12 +29,12 @@ class coletavel2(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
 
-        self.coletado = False  # ← flag para evitar print repetido
+        self.coletado = False  # flag para evitar print repetido
 
-    def collect(self, contador_la):
+    def collect(self, contador):
         if not self.coletado:
             self.coletado = True
-            contador_la[0] += 1  # Incrementa o contador
-            print(f"Lã coletada! {contador_la[0]}")  
+            contador[1] += 1  # Incrementa o contador
+            print(f"Lã coletada! {contador[1]}")  
             self.kill()
 
