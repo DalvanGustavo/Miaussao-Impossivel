@@ -16,7 +16,8 @@ cat = Gato()
 peixe = Coletavel(500, 300)
 peixe2 = Coletavel(800, 250)
 la = Coletavel(850, 300)
-
+font = pygame.font.SysFont(None, 36)
+contador = [0,0]
 
 todas_as_sprites.add(cat)
 while running:
@@ -40,10 +41,29 @@ while running:
         y = chao_y
         vel_y = 0
     camera_x = x - 300   
-    camera_y = y - 200   
+    camera_y = y - 200 
+
     cat.rect.topleft = (x - camera_x, y - camera_y)
+    peixe.rect.topleft = (peixe.x - camera_x, peixe.y - camera_y)
+    peixe2.rect.topleft = (peixe2.x - camera_x, peixe2.y - camera_y)
+    la.rect.topleft = (la.x - camera_x, la.y - camera_y)
+
+   #colisão coletavel 
+    if cat.rect.colliderect(peixe.rect):
+        peixe.peixe(contador)
+    if cat.rect.colliderect(peixe2.rect):
+        peixe2.peixe(contador)
+    if cat.rect.colliderect(la.rect):
+        la.la(contador) 
+
     screen.fill((255, 255, 255))
     pygame.draw.rect(screen, (0, 255, 0), (0 - camera_x, chao_y + 50 - camera_y, 1200, 100))  
+
+    texto = font.render(f"Peixes: {contador[0]}", True, (0,0,0))
+    screen.blit(texto, (10,10))
+    texto2 = font.render(f"Lã: {contador[1]}", True,(0,0,0) )
+    screen.blit(texto2,(200,10))
+    
     todas_as_sprites.draw(screen)
     todas_as_sprites.update()
     pygame.display.flip()
