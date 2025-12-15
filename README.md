@@ -1,4 +1,4 @@
-# Projeto IP - Miaussão Impossível 🐈
+🐈 # Projeto IP - Miaussão Impossível 
 
 ## 🗒️ Descrição
 O projeto consiste na criação de um jogo em 2D em Python no qual um gato se perdeu e precisa encontrar o seu caminho para casa. Existem 3 fases no jogo e para passar delas, você precisa coletar 3 itens de cada tipo para passar de fase e chegar ao seu destino final, porém existirão obstáculos e o usuário deve tomar cuidado para não perder todas as vidas. O projeto é baseado nos princípios de Programação Orientada a Objetos **(POO)**.
