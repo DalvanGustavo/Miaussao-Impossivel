@@ -24,7 +24,7 @@ Thiago Ewerton |
 
 ## 📚 Conceitos
 * **Programação Orientada a Objetos (POO)**: Criação de classes e logística do jogo
-* **Colisões**: Coleta de itens
+* **Colisões**: Detecção e contabilização da coleta de itens
 * **Controle do estado**: Registro e exibição dos coletáveis, uso de condicionais e laços de repetição para criar cenários distintos
 
 ## 📒 Desafios/Erros e Lições Aprendidas
