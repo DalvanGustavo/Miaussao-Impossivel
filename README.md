@@ -8,9 +8,9 @@ O projeto consiste na criação de um jogo em 2D em Python no qual um gato se pe
 ## 📸 Capturas de Tela
 
 ## 🛠️ Ferramentas e Justificativas
-* Python - Linguagem utilizada na codificação do jogo
-* PyGame - Biblioteca utilizada para o desenvolvimento do jogo. Escolhida por ser uma biblioteca amplamente utilizada para jogos em Python e por oferecer funcionalidades necessárias para a realização do projeto
-* GitHub - Local para armazenar as informações do projeto e fazer os processos de modificação
+* **Python** - Linguagem utilizada na codificação do jogo
+* **PyGame** - Biblioteca utilizada para o desenvolvimento do jogo. Escolhida por ser uma biblioteca amplamente utilizada para jogos em Python e por oferecer funcionalidades necessárias para a realização do projeto
+* **GitHub** - Local para armazenar as informações do projeto e fazer os processos de modificação
 
 ## 💼 Divisão de Trabalho 
 Integrante     |  Papel
