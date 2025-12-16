@@ -1,7 +1,7 @@
 # 🐈 Projeto IP - Miaussão Impossível 
 
 ## 🗒️ Descrição
-O projeto consiste na criação de um jogo em 2D em Python no qual um gato se perdeu e precisa encontrar o seu caminho para casa. Existem 3 fases no jogo e para passar delas, você precisa coletar 3 itens de cada tipo para passar de fase e chegar ao seu destino final, porém existirão obstáculos e o usuário deve tomar cuidado para não perder todas as vidas. O projeto é baseado nos princípios de **Programação Orientada a Objetos (POO)**.
+O projeto consiste na criação de um jogo 2D em Python, no qual um gato se perdeu e precisa encontrar o seu caminho para casa. Existem 3 fases no jogo e, para passar delas, você precisa coletar 3 itens de cada tipo para passar de fase e chegar ao seu destino final, porém existirão obstáculos e o usuário deve tomar cuidado para não perder todas as vidas. O projeto é baseado nos princípios de **Programação Orientada a Objetos (POO)**.
 
 ## 🏛️ Arquitetura
 
@@ -15,12 +15,12 @@ O projeto consiste na criação de um jogo em 2D em Python no qual um gato se pe
 ## 💼 Divisão de Trabalho 
 Integrante     |  Papel
 -------------- | ------
-Dalvan Gustavo |
-Gustavo Franco |
-João Victor    |
-Kennedy Kauê   |
-Letícia Ramos  |
-Thiago Ewerton |
+Dalvan Gustavo | Atualização do jogo + juntar todos os códigos, fazendo funcionar o jogo
+Gustavo Franco | Auxílio na montagem de telas + codificação na parte de mudança de telas + organização do GitHub (README.md)
+João Victor    | Montagem de slides, telas e achar sons e músicas + auxílio na codificação na parte de mudança de telas 
+Kennedy Kauê   | Modelar os itens coletáveis (e suas funcionalidades) + aplicação no código do jogo dessa parte
+Letícia Ramos  | Modelar obstáculos, inimigos + aplicação no código do jogo dessa parte
+Thiago Ewerton | Movimentação e funcionalidades básicas + aplicação no código do jogo dessa parte
 
 ## 📚 Conceitos
 * **Programação Orientada a Objetos (POO)**: Criação de classes e logística do jogo
