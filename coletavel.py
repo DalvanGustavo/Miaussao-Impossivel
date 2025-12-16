@@ -23,3 +23,8 @@ class Coletavel(pygame.sprite.Sprite):
             self.coletado = True
             contador[1] += 1  # Incrementa o contador  
             self.kill()
+    def rato(self, contador):
+        if not self.coletado:
+            self.coletado = True
+            contador[2] += 1  # Incrementa o contador  
+            self.kill()
