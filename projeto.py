@@ -11,11 +11,11 @@ tela = pygame.display.set_mode((largura, altura))
 pygame.display.set_caption('Miaussão Impossível')
 
 imagens_tela_inicio = {
-    0: pygame.image.load('tela_inicio_iniciar.png').convert(),    
-    1: pygame.image.load('tela_inicio_instrucoes.png').convert(), 
-    2: pygame.image.load('tela_inicio_sair.png').convert(),       
+    0: pygame.image.load('Telas/tela_inicio_iniciar.png').convert(),    
+    1: pygame.image.load('Telas/tela_inicio_instrucoes.png').convert(), 
+    2: pygame.image.load('Telas/tela_inicio_sair.png').convert(),       
 }
-imagem_instrucoes = pygame.image.load('tela_instrucoes.png').convert() 
+imagem_instrucoes = pygame.image.load('Telas/tela_instrucoes.png').convert() 
 
 estado = 'Menu'  
 opcao = 0
@@ -80,7 +80,7 @@ while True:
                 super().__init__()
                 self.walk_sprites = []
                 for i in range(1,3):
-                    self.walk_sprites.append(pygame.image.load(f'sprites_ip/gato_{i}.png'))
+                    self.walk_sprites.append(pygame.image.load(f'Sprites/gato_{i}.png'))
                 self.current_sprite = 0
                 self.animation_speed = 0.15
                 self.flip = False
@@ -146,8 +146,8 @@ while True:
 
             if ratos == 3:
                 imagens_tela_vitoria = {
-                    0: pygame.image.load('tela_vitoria_recomecar.png').convert(),    
-                    1: pygame.image.load('tela_vitoria_sair.png').convert(),  
+                    0: pygame.image.load('Telas/tela_vitoria_recomecar.png').convert(),    
+                    1: pygame.image.load('Telas/tela_vitoria_sair.png').convert(),  
                 }
 
                 estado = 'Menu'
