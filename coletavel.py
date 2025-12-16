@@ -8,20 +8,18 @@ class Coletavel(pygame.sprite.Sprite):
         self.y = y
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
-
+        self.x = x # Coordenada de MUNDO X (fixa)
+        self.y = y # Coordenada de MUNDO Y (fixa)
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y) # Inicializa o rect na posição de mundo
         self.coletado = False  # flag para evitar print repetido
-
     def peixe(self, contador):
         if not self.coletado:
             self.coletado = True
-            contador[0] += 1  # Incrementa o contador
-            print(f"Peixe coletado! {contador[0]}")  
+            contador[0] += 1  # Incrementa o contador 
             self.kill()
-
     def la(self, contador):
         if not self.coletado:
             self.coletado = True
-            contador[1] += 1  # Incrementa o contador
-            print(f"Lã coletada! {contador[1]}")  
+            contador[1] += 1  # Incrementa o contador  
             self.kill()
-
