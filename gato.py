@@ -3,13 +3,15 @@ class Gato(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.walk_sprites = []
-        for i in range(1,4):
-            self.walk_sprites.append(pygame.image.load(f"sprites/tile_{i}.png"))
+        for i in range(1,3):
+            self.walk_sprites.append(pygame.image.load(f'Sprites/gato_{i}.png'))
         self.current_sprite = 0
         self.animation_speed = 0.15
         self.flip = False
         self.image = self.walk_sprites[0]
         self.rect = self.image.get_rect()
+        self.rect.centerx = 100
+        self.rect.centery = 500
     def andar_direita(self):
         self.flip = False
         self.current_sprite += self.animation_speed
