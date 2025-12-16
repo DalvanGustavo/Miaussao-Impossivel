@@ -25,16 +25,19 @@ POSICAO_LIMITE_INICIAL = gato.rect.centerx # Limite esquerdo para o gato não an
 # --- Criação dos Coletáveis Iniciais ---
 # Calcula posições iniciais aleatórias para o Peixe
 x_peixe = randint(gato.rect.centerx*2, 1080)
-y_peixe = randint(350, 450)
+y_peixe = randint(400, 450)
 peixe = Coletavel(x_peixe, y_peixe, 0, 0, 255) # Cria o Peixe (assumindo cor RGB azul)
 # Calcula posições iniciais aleatórias para a Lã
 x_la = randint(gato.rect.centerx*2+1, 1080)
-y_la = randint(350, 450)
+y_la = randint(400, 450)
 la = Coletavel(x_la, y_la, 255, 0, 0) # Cria a Lã (assumindo cor RGB vermelha)
+x_rato = randint(gato.rect.centerx*2+2, 1080)
+y_rato = randint(400, 450)
+rato = Coletavel(x_rato, y_rato, 0, 255, 0) # Cria o Rato (assumindo cor RGB verde)
 # --- Variáveis de Interface e Pontuação ---
 font = pygame.font.SysFont(None, 36) # Define a fonte para textos
-contador = [0, 0] # Contador: [0] para Peixes, [1] para Lãs
-sprites.add(gato, peixe, la) # Adiciona todos os objetos visuais ao grupo de sprites
+contador = [0, 0, 0] # Contador: [0] para Peixes, [1] para Lãs
+sprites.add(gato, peixe, la, rato) # Adiciona todos os objetos visuais ao grupo de sprites
 pygame.display.set_caption('Miaussão Impossível') # Define o título da janela
 # --- Configuração das Telas de Estado (Menu) ---
 imagens_tela_inicio = {
@@ -106,7 +109,7 @@ while True:
         imagem_fundo = pygame.image.load(f'Telas/tela{cenario}_vidas{vidas}.png').convert()
         # --- LOOP INTERNO DE JOGABILIDADE (O "while True" aninhado é o problema estrutural) ---
         while True:
-            relogio.tick(30) # Limita a 30 FPS
+            relogio.tick(60) # Limita a 60 FPS
             # --- Checagem de Eventos REPETIDA (Necessária devido ao loop interno) ---
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -206,6 +209,22 @@ while True:
                     # Se 2 lãs foram coletadas, move o sprite para fora da tela
                     la.rect.x = -5000
                     la.rect.y = -5000
+            if gato.rect.colliderect(rato.rect):
+                rato.rato(contador) # Chama método que incrementa a contagem de lãs
+                # Lógica de respawn da Lã (até 2)
+                if contador[2] < 2:
+                    x_rato_anterior = x_rato
+                    novo_x_min = x_rato_anterior + 100
+                    novo_x_max = novo_x_min + 400
+                    x_rato = randint(novo_x_min, novo_x_max)
+                    y_rato = randint(250, 300)
+                    # Cria um NOVO objeto lã e o adiciona
+                    rato = Coletavel(x_rato, y_rato, 0, 255, 0)
+                    sprites.add(rato)
+                else:
+                    # Se 2 lãs foram coletadas, move o sprite para fora da tela
+                    rato.rect.x = -5000
+                    rato.rect.y = -5000
             # --- Lógica de Mudança de Fase (Cenário) ---
             if cenario1 and las == 3: # Se o cenario1 estiver ativo e las (lãs) for 3
                 cenario = 2
@@ -243,7 +262,13 @@ while True:
                                 if opcao == 0:
                                     estado = 'Jogo'
                                 elif opcao == 1:
-                                    estado = 'Sair' 
+                                    estado = 'Sair'
+            texto = font.render(f"Peixes: {contador[0]}", True, (0,0,0))
+            tela.blit(texto, (10,10))
+            texto2 = font.render(f"Lã: {contador[1]}", True,(0,0,0) )
+            tela.blit(texto2,(200,10))
+            texto3 = font.render(f"Rato: {contador[2]}", True,(0,0,0) )
+            tela.blit(texto3,(350,10))
             sprites.update() # Atualiza os sprites (Novamente, antes do flip)
             pygame.display.flip() # Atualiza a tela (dentro do loop interno)
     # Lógica para SAIR do programa (Se o estado for 'Sair' no loop externo)
