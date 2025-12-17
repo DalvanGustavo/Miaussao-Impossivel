@@ -26,14 +26,14 @@ POSICAO_LIMITE_INICIAL = gato.rect.centerx # Limite esquerdo para o gato não an
 # Calcula posições iniciais aleatórias para o Peixe
 x_peixe = randint(gato.rect.centerx*2, 1080)
 y_peixe = randint(400, 450)
-peixe = Coletavel(x_peixe, y_peixe, 0, 0, 255) # Cria o Peixe (assumindo cor RGB azul)
+peixe = Coletavel(x_peixe, y_peixe, 1) # Cria o Peixe (assumindo cor RGB azul)
 # Calcula posições iniciais aleatórias para a Lã
 x_la = randint(gato.rect.centerx*2+1, 1080)
 y_la = randint(400, 450)
-la = Coletavel(x_la, y_la, 255, 0, 0) # Cria a Lã (assumindo cor RGB vermelha)
+la = Coletavel(x_la, y_la, 0) # Cria a Lã (assumindo cor RGB vermelha)
 x_rato = randint(gato.rect.centerx*2+2, 1080)
 y_rato = randint(400, 450)
-rato = Coletavel(x_rato, y_rato, 0, 255, 0) # Cria o Rato (assumindo cor RGB verde)
+rato = Coletavel(x_rato, y_rato, 2) # Cria o Rato (assumindo cor RGB verde)
 # --- Variáveis de Interface e Pontuação ---
 font = pygame.font.SysFont(None, 36) # Define a fonte para textos
 contador = [0, 0, 0] # Contador: [0] para Peixes, [1] para Lãs
@@ -186,7 +186,7 @@ while True:
                     x_peixe = randint(novo_x_min, novo_x_max)
                     y_peixe = randint(250, 300)
                     # Cria um NOVO objeto peixe e o adiciona
-                    peixe = Coletavel(x_peixe, y_peixe, 0, 0, 255)
+                    peixe = Coletavel(x_peixe, y_peixe, 1)
                     sprites.add(peixe)
                 else:
                     # Se 3 peixes foram coletados, move o sprite para fora da tela
@@ -203,7 +203,7 @@ while True:
                     x_la = randint(novo_x_min, novo_x_max)
                     y_la = randint(250, 300)
                     # Cria um NOVO objeto lã e o adiciona
-                    la = Coletavel(x_la, y_la, 255, 0, 0)
+                    la = Coletavel(x_la, y_la, 0)
                     sprites.add(la)
                 else:
                     # Se 2 lãs foram coletadas, move o sprite para fora da tela
@@ -219,7 +219,7 @@ while True:
                     x_rato = randint(novo_x_min, novo_x_max)
                     y_rato = randint(250, 300)
                     # Cria um NOVO objeto lã e o adiciona
-                    rato = Coletavel(x_rato, y_rato, 0, 255, 0)
+                    rato = Coletavel(x_rato, y_rato, 2)
                     sprites.add(rato)
                 else:
                     # Se 2 lãs foram coletadas, move o sprite para fora da tela
