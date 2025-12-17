@@ -7,7 +7,7 @@ from random import randint  # Para gerar números aleatórios (posições de ite
 pygame.init() # Inicializa todos os módulos do Pygame
 # --- Configurações da Tela ---
 largura = 1080
-altura = 720 
+altura = 720
 tela = pygame.display.set_mode((largura, altura)) # Cria a janela do jogo
 sprites = pygame.sprite.Group() # Cria um grupo para gerenciar todos os objetos visuais
 relogio = pygame.time.Clock()   # Objeto para controlar a taxa de quadros (FPS)
@@ -106,10 +106,21 @@ while True:
         DEAD_ZONE_LEFT = CAMERA_OFFSET_LATERAL
         DEAD_ZONE_RIGHT = largura - CAMERA_OFFSET_LATERAL
         # Carrega a imagem de fundo (CUIDADO: Carrega a imagem a cada frame se estiver no loop interno!)
-        imagem_fundo = pygame.image.load(f'Telas/tela{cenario}_vidas{vidas}.png').convert()
+        imagem_fundo = pygame.image.load(f'Telas/tela{cenario}.png').convert()
         # --- LOOP INTERNO DE JOGABILIDADE (O "while True" aninhado é o problema estrutural) ---
         while True:
             relogio.tick(60) # Limita a 60 FPS
+            #Configuração de imagem de vidas
+            if vidas == 3:
+                imagem_vidas = pygame.image.load('Sprites/vidas3.png').convert_alpha()
+            
+            elif vidas == 2:
+                imagem_vidas = pygame.image.load('Sprites/vidas2.png').convert_alpha()
+            
+            elif vidas == 1:
+                imagem_vidas = pygame.image.load('Sprites/vidas1.png').convert_alpha()
+            rect_imagem = imagem_vidas.get_rect()
+            rect_imagem.bottomright = (largura - 40, 85)
             # --- Checagem de Eventos REPETIDA (Necessária devido ao loop interno) ---
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -161,7 +172,8 @@ while True:
             tela.blit(imagem_fundo, (fundo_x_tela, 0))
             # Desenha uma segunda imagem para criar o loop do fundo
             fundo_x2_tela = pos_mundo_fundo + largura_fundo - camera_x
-            tela.blit(imagem_fundo, (fundo_x2_tela, 0)) 
+            tela.blit(imagem_fundo, (fundo_x2_tela, 0))
+            tela.blit(imagem_vidas, rect_imagem) #Adiciona imagem das vidas na tela
             # Lógica para mover o ponto de referência do fundo quando o primeiro bloco sai da tela
             if fundo_x_tela + largura_fundo < 0:
                 pos_mundo_fundo += largura_fundo
