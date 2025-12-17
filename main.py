@@ -1,6 +1,7 @@
 import pygame
 from gato import Gato       # Importa a classe Gato (presumivelmente o personagem principal)
 from coletavel import Coletavel # Importa a classe Coletavel (itens como peixes e lã)
+from obstáculos import Obstaculos # Importa os obstáculos
 from pygame.locals import * # Importa constantes do Pygame (K_UP, K_DOWN, QUIT, etc.)
 from sys import exit        # Para sair do programa
 from random import randint  # Para gerar números aleatórios (posições de itens)
@@ -10,6 +11,8 @@ largura = 1080
 altura = 720
 tela = pygame.display.set_mode((largura, altura)) # Cria a janela do jogo
 sprites = pygame.sprite.Group() # Cria um grupo para gerenciar todos os objetos visuais
+grupo_obstaculos = pygame.sprite.Group()# Cria um grupo para gerenciar os obstáculos
+grupo_plataformas = pygame.sprite.Group()# Cria um grupo para gerenciar as plataformas
 relogio = pygame.time.Clock()   # Objeto para controlar a taxa de quadros (FPS)
 # --- Variáveis de Física e Movimento ---
 vel_y = 0               # Velocidade vertical atual (usada para pulo e gravidade)
@@ -18,7 +21,7 @@ gravidade = 0.8         # Aceleração vertical aplicada a cada frame
 chao_y = 500            # Coordenada Y que representa o chão (onde o gato para de cair)
 forca_pulo = -20        # Força aplicada ao pular (valor negativo para ir para cima)
 # --- Variáveis de Câmera e Posição Inicial ---
-CAMERA_OFFSET_LATERAL = 200 # Distância da borda onde a câmera começa a seguir (zona morta)
+CAMERA_OFFSET_LATERAL = 500 # Distância da borda onde a câmera começa a seguir (zona morta)
 CAMERA_X_INICIAL = 0        # Posição X inicial da câmera
 gato = Gato()               # Cria a instância do personagem principal
 POSICAO_LIMITE_INICIAL = gato.rect.centerx # Limite esquerdo para o gato não andar para trás
@@ -49,6 +52,9 @@ imagem_instrucoes = pygame.image.load('Telas/tela_instrucoes.png').convert()
 estado = 'Menu' # Define o estado inicial do jogo
 opcao = 0       # Opção selecionada no menu
 n_opcoes = len(imagens_tela_inicio) # Número total de opções no menu
+# Evento para criar obstáculos
+CRIAR_OBSTACULO = pygame.USEREVENT + 1
+pygame.time.set_timer(CRIAR_OBSTACULO, 300)  # a cada 0.3s
 # --- LOOP PRINCIPAL DO PYGAME (Controla a transição de estados) ---
 while True:
     # --- Checagem de Eventos do Sistema (Mouse, Teclado, Fechar) ---
@@ -80,6 +86,7 @@ while True:
                  if event.key == K_ESCAPE:
                     estado = 'MENU' # Volta para o menu (CUIDADO: 'MENU' vs 'Menu')
                     opcao = 0       # Define a opção "Iniciar" como selecionada ao retornar
+        # --- Criação de Obstáculos e Plataformas ---
     # --- RENDERIZAÇÃO E TRANSIÇÃO DE TELA (Desenha a tela com base no estado) ---
     tela.fill((0, 0, 0)) # Limpa a tela com preto a cada frame
     if estado == 'Menu':
@@ -111,21 +118,26 @@ while True:
         while True:
             relogio.tick(60) # Limita a 60 FPS
             #Configuração de imagem de vidas
-            if vidas == 3:
-                imagem_vidas = pygame.image.load('Sprites/vidas3.png').convert_alpha()
-            
-            elif vidas == 2:
-                imagem_vidas = pygame.image.load('Sprites/vidas2.png').convert_alpha()
-            
-            elif vidas == 1:
-                imagem_vidas = pygame.image.load('Sprites/vidas1.png').convert_alpha()
-            rect_imagem = imagem_vidas.get_rect()
-            rect_imagem.bottomright = (largura - 40, 85)
+            if vidas > 0:
+                imagem_vidas = pygame.image.load(f'Sprites/vidas{vidas}.png').convert_alpha()
+                rect_imagem = imagem_vidas.get_rect()
+                rect_imagem.bottomright = (largura - 40, 85)
+                tela.blit(imagem_vidas, rect_imagem)
+            else:
+                pass # Sai do loop do jogo se as vidas acabarem
             # --- Checagem de Eventos REPETIDA (Necessária devido ao loop interno) ---
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
                     exit()
+                if event.type == CRIAR_OBSTACULO:
+                    # Só cria se o grupo estiver vazio (um por vez)
+                    if len(grupo_obstaculos) == 0:
+                        novo_obstaculo = Obstaculos()
+                        # Define a posição fixa no "mundo" à frente da câmera
+                        novo_obstaculo.rect.x = camera_x + largura + randint(200, 600)
+                        grupo_obstaculos.add(novo_obstaculo)
+                        sprites.add(novo_obstaculo)
                 if event.type == pygame.KEYDOWN:
                     # Lógica de Pulo
                     if event.key == pygame.K_UP or event.key == pygame.K_w:
@@ -143,6 +155,10 @@ while True:
             # Impede o gato de voltar além do limite inicial
             if gato.rect.centerx < POSICAO_LIMITE_INICIAL:
                 gato.rect.centerx = POSICAO_LIMITE_INICIAL
+            # --- Lógica de Colisão com Obstáculos ---
+            colisoes = pygame.sprite.spritecollide(gato, grupo_obstaculos, True)
+            for obstaculo in colisoes:
+                vidas -= 1
             # --- Aplicação da Gravidade e Chão ---
             vel_y += gravidade
             gato.rect.centery += vel_y
@@ -166,6 +182,7 @@ while True:
                     camera_x = gato.rect.centerx - DEAD_ZONE_LEFT
                     if camera_x < 0:
                         camera_x = 0 # Trava a câmera na posição zero
+            grupo_obstaculos.update()
             # --- Desenho do Fundo (Efeito de Fundo Infinito) ---
             # Calcula a posição do fundo na tela, subtraindo o offset da câmera
             fundo_x_tela = pos_mundo_fundo - camera_x
@@ -183,15 +200,21 @@ while True:
             sprites.update() # Chama o método .update() de todos os sprites (para animação)
             # --- Desenho dos Sprites ---
             for sprite in sprites:
-                # Ajusta a posição de desenho de cada sprite com base no offset da câmera
+                # Subtrair camera_x faz o objeto ficar parado na posição do mundo
                 pos_tela_x = sprite.rect.x - camera_x
                 pos_tela_y = sprite.rect.y - camera_y
                 tela.blit(sprite.image, (pos_tela_x, pos_tela_y))
+
+            # Lógica extra: Se o obstáculo passou da tela pela esquerda, remove ele para nascer outro
+            for obs in grupo_obstaculos:
+                if obs.rect.x < camera_x - 100:
+                    obs.kill()
             # --- Lógica de Colisão (Peixe) ---
             if gato.rect.colliderect(peixe.rect):
                 peixe.peixe(contador) # Chama método que incrementa a contagem de peixes
                 # Lógica de respawn do Peixe (até 3)
                 if contador[0] < 3:
+                    cenario = 2
                     x_peixe_anterior = x_peixe
                     novo_x_min = x_peixe_anterior + 100
                     novo_x_max = novo_x_min + 400
@@ -242,12 +265,12 @@ while True:
                 cenario = 2
                 vidas = 3
                 # Carrega o novo fundo (com novas vidas)
-                imagem_fundo = pygame.image.load(f'Telas/tela{cenario}_vidas{vidas}.png').convert()
+                imagem_fundo = pygame.image.load(f'Telas/tela{cenario}.png').convert()
                 cenario2 = True 
             if cenario2 and camas == 3: # Lógica para ir para o cenário 3
                 cenario = 3
                 vidas = 3
-                imagem_fundo = pygame.image.load(f'Telas/tela{cenario}_vidas{vidas}.png').convert()
+                imagem_fundo = pygame.image.load(f'Telas/tela{cenario}.png').convert()
                 cenario3 = True
             # --- Lógica de Fim de Jogo / Vitória ---
             if ratos == 3: # Se o contador de "ratos" (vitória) for 3
