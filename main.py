@@ -1,6 +1,6 @@
 import pygame
 from gato import Gato       # Importa a classe Gato (presumivelmente o personagem principal)
-from coletavel import Coletavel # Importa a classe Coletavel (itens como peixes e lã)
+from coletavel import Coletavel # Importa a classe Coletavel (itens como camas e lã)
 from obstáculos import Obstaculos # Importa os obstáculos
 from pygame.locals import * # Importa constantes do Pygame (K_UP, K_DOWN, QUIT, etc.)
 from sys import exit        # Para sair do programa
@@ -26,21 +26,21 @@ CAMERA_X_INICIAL = 0        # Posição X inicial da câmera
 gato = Gato()               # Cria a instância do personagem principal
 POSICAO_LIMITE_INICIAL = gato.rect.centerx # Limite esquerdo para o gato não andar para trás
 # --- Criação dos Coletáveis Iniciais ---
-# Calcula posições iniciais aleatórias para o Peixe
-x_peixe = randint(gato.rect.centerx*2, 1080)
-y_peixe = randint(400, 450)
-peixe = Coletavel(x_peixe, y_peixe, 0, 0, 255) # Cria o Peixe (assumindo cor RGB azul)
 # Calcula posições iniciais aleatórias para a Lã
 x_la = randint(gato.rect.centerx*2+1, 1080)
 y_la = randint(400, 450)
-la = Coletavel(x_la, y_la, 255, 0, 0) # Cria a Lã (assumindo cor RGB vermelha)
+la = Coletavel(x_la, y_la, 0) # Cria a Lã (assumindo cor RGB vermelha)
+# Calcula posições iniciais aleatórias para o cama
+x_cama = randint(gato.rect.centerx*2, 1080)
+y_cama = randint(400, 450)
+cama = Coletavel(x_cama, y_cama, 1) # Cria o cama (assumindo cor RGB azul)
 x_rato = randint(gato.rect.centerx*2+2, 1080)
 y_rato = randint(400, 450)
-rato = Coletavel(x_rato, y_rato, 0, 255, 0) # Cria o Rato (assumindo cor RGB verde)
+rato = Coletavel(x_rato, y_rato, 2) # Cria o Rato (assumindo cor RGB verde)
 # --- Variáveis de Interface e Pontuação ---
 font = pygame.font.SysFont(None, 36) # Define a fonte para textos
-contador = [0, 0, 0] # Contador: [0] para Peixes, [1] para Lãs
-sprites.add(gato, peixe, la, rato) # Adiciona todos os objetos visuais ao grupo de sprites
+contador = [0, 0, 0] # Contador: [0] para camas, [1] para Lãs
+sprites.add(gato, cama, la, rato) # Adiciona todos os objetos visuais ao grupo de sprites
 pygame.display.set_caption('Miaussão Impossível') # Define o título da janela
 # --- Configuração das Telas de Estado (Menu) ---
 imagens_tela_inicio = {
@@ -209,24 +209,24 @@ while True:
             for obs in grupo_obstaculos:
                 if obs.rect.x < camera_x - 100:
                     obs.kill()
-            # --- Lógica de Colisão (Peixe) ---
-            if gato.rect.colliderect(peixe.rect):
-                peixe.peixe(contador) # Chama método que incrementa a contagem de peixes
-                # Lógica de respawn do Peixe (até 3)
+            # --- Lógica de Colisão (cama) ---
+            if gato.rect.colliderect(cama.rect):
+                cama.cama(contador) # Chama método que incrementa a contagem de camas
+                # Lógica de respawn do cama (até 3)
                 if contador[0] < 3:
                     cenario = 2
-                    x_peixe_anterior = x_peixe
-                    novo_x_min = x_peixe_anterior + 100
+                    x_cama_anterior = x_cama
+                    novo_x_min = x_cama_anterior + 100
                     novo_x_max = novo_x_min + 400
-                    x_peixe = randint(novo_x_min, novo_x_max)
-                    y_peixe = randint(250, 300)
-                    # Cria um NOVO objeto peixe e o adiciona
-                    peixe = Coletavel(x_peixe, y_peixe, 0, 0, 255)
-                    sprites.add(peixe)
+                    x_cama = randint(novo_x_min, novo_x_max)
+                    y_cama = randint(250, 300)
+                    # Cria um NOVO objeto cama e o adiciona
+                    cama = Coletavel(x_cama, y_cama, 1)
+                    sprites.add(cama)
                 else:
-                    # Se 3 peixes foram coletados, move o sprite para fora da tela
-                    peixe.rect.x = -5000 
-                    peixe.rect.y = -5000
+                    # Se 3 camas foram coletados, move o sprite para fora da tela
+                    cama.rect.x = -5000 
+                    cama.rect.y = -5000
             # --- Lógica de Colisão (Lã) ---
             if gato.rect.colliderect(la.rect):
                 la.la(contador) # Chama método que incrementa a contagem de lãs
@@ -238,7 +238,7 @@ while True:
                     x_la = randint(novo_x_min, novo_x_max)
                     y_la = randint(250, 300)
                     # Cria um NOVO objeto lã e o adiciona
-                    la = Coletavel(x_la, y_la, 255, 0, 0)
+                    la = Coletavel(x_la, y_la, 1)
                     sprites.add(la)
                 else:
                     # Se 2 lãs foram coletadas, move o sprite para fora da tela
@@ -254,7 +254,7 @@ while True:
                     x_rato = randint(novo_x_min, novo_x_max)
                     y_rato = randint(250, 300)
                     # Cria um NOVO objeto lã e o adiciona
-                    rato = Coletavel(x_rato, y_rato, 0, 255, 0)
+                    rato = Coletavel(x_rato, y_rato, 2)
                     sprites.add(rato)
                 else:
                     # Se 2 lãs foram coletadas, move o sprite para fora da tela
@@ -298,7 +298,7 @@ while True:
                                     estado = 'Jogo'
                                 elif opcao == 1:
                                     estado = 'Sair'
-            texto = font.render(f"Peixes: {contador[0]}", True, (0,0,0))
+            texto = font.render(f"camas: {contador[0]}", True, (0,0,0))
             tela.blit(texto, (10,10))
             texto2 = font.render(f"Lã: {contador[1]}", True,(0,0,0) )
             tela.blit(texto2,(200,10))
