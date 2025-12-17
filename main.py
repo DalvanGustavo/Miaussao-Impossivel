@@ -22,6 +22,7 @@ CAMERA_OFFSET_LATERAL = 200 # Distância da borda onde a câmera começa a segui
 CAMERA_X_INICIAL = 0        # Posição X inicial da câmera
 gato = Gato()               # Cria a instância do personagem principal
 POSICAO_LIMITE_INICIAL = gato.rect.centerx # Limite esquerdo para o gato não andar para trás
+
 # --- Criação dos Coletáveis Iniciais ---
 # Calcula posições iniciais aleatórias para o Peixe
 x_peixe = randint(gato.rect.centerx*2, 1080)
@@ -34,17 +35,39 @@ la = Coletavel(x_la, y_la, 0) #MUDEI AQUIIII AAAAA
 x_rato = randint(gato.rect.centerx*2+2, 1080)
 y_rato = randint(400, 450)
 rato = Coletavel(x_rato, y_rato, 2) #MUDEI AQUIIII AAAAA
+
+# --- CONFIGURAÇÃO DA ORDEM DAS FASES ---
+# Dicionário mapeando a lógica: 
+# "img_idx": qual imagem usar (0=Lã, 1=Cama, 2=Rato)
+# "cnt_idx": qual índice do contador aumentar (0=Cama, 1=Lã, 2=Rato)
+# "meta": quantos precisa pegar para passar de fase
+fases_itens = [
+    {"nome": "Lã",   "img_idx": 0, "cnt_idx": 1, "meta": 5}, # Fase 0: Lã
+    {"nome": "Cama","img_idx": 1, "cnt_idx": 0, "meta": 3}, # Fase 1: Cama
+    {"nome": "Rato", "img_idx": 2, "cnt_idx": 2, "meta": 3}  # Fase 2: Rato
+]
+
+# Variáveis globais de controle
+item_ativo = None 
+indice_fase = 0
+
 # --- Variáveis de Interface e Pontuação ---
 font = pygame.font.SysFont(None, 36) # Define a fonte para textos
 contador = [0, 0, 0] # Contador: [0] para Peixes, [1] para Lãs
-sprites.add(gato, peixe, la, rato) # Adiciona todos os objetos visuais ao grupo de sprites
 pygame.display.set_caption('Miaussão Impossível') # Define o título da janela
+
 # --- Configuração das Telas de Estado (Menu) ---
 imagens_tela_inicio = {
     0: pygame.image.load('Telas/tela_inicio_iniciar.png').convert(),    # Opção 0: Iniciar
     1: pygame.image.load('Telas/tela_inicio_instrucoes.png').convert(), # Opção 1: Instruções
     2: pygame.image.load('Telas/tela_inicio_sair.png').convert(),       # Opção 2: Sair
 }
+
+imagens_tela_vitoria = {
+    0: pygame.image.load('Telas/tela_vitoria_recomecar.png').convert(),    
+    1: pygame.image.load('Telas/tela_vitoria_sair.png').convert(),  
+}
+
 imagem_instrucoes = pygame.image.load('Telas/tela_instrucoes.png').convert() 
 estado = 'Menu' # Define o estado inicial do jogo
 opcao = 0       # Opção selecionada no menu
@@ -90,6 +113,19 @@ while True:
         # Desenha a tela de instruções
         tela.blit(imagem_instrucoes, (0, 0))
     elif estado == 'Jogo':
+        # RESET DE VARIÁVEIS (Importante: resetar tudo ao iniciar o jogo)
+        sprites.empty() # Limpa sprites antigos
+        sprites.add(gato)
+        
+        contador = [0, 0, 0] # Zera pontuação
+        indice_fase = 0      # Começa na fase 0 (Lã)
+        
+        # Cria o PRIMEIRO item do jogo
+        dados_fase = fases_itens[indice_fase]
+        # Spawna um pouco à frente do gato
+        item_ativo = Coletavel(randint(400, 800), randint(300, 450), dados_fase["img_idx"])
+        sprites.add(item_ativo)
+
         # --- Configurações de Estado ao ENTRAR no Jogo (Problema: Essas variáveis resetam a cada frame!) ---
         cenario = 1
         vidas = 3
@@ -175,77 +211,54 @@ while True:
                 pos_tela_x = sprite.rect.x - camera_x
                 pos_tela_y = sprite.rect.y - camera_y
                 tela.blit(sprite.image, (pos_tela_x, pos_tela_y))
-            # --- Lógica de Colisão (Peixe) ---
-            if gato.rect.colliderect(peixe.rect):
-                peixe.peixe(contador) # Chama método que incrementa a contagem de peixes
-                # Lógica de respawn do Peixe (até 3)
-                if contador[0] < 3:
-                    x_peixe_anterior = x_peixe
-                    novo_x_min = x_peixe_anterior + 100
-                    novo_x_max = novo_x_min + 400
-                    x_peixe = randint(novo_x_min, novo_x_max)
-                    y_peixe = randint(250, 300)
-                    # Cria um NOVO objeto peixe e o adiciona
-                    peixe = Coletavel(x_peixe, y_peixe, 1) #MUDEI AQUIIII AAAAA
-                    sprites.add(peixe)
-                else:
-                    # Se 3 peixes foram coletados, move o sprite para fora da tela
-                    peixe.rect.x = -5000 
-                    peixe.rect.y = -5000
-            # --- Lógica de Colisão (Lã) ---
-            if gato.rect.colliderect(la.rect):
-                la.la(contador) # Chama método que incrementa a contagem de lãs
-                # Lógica de respawn da Lã (até 2)
-                if contador[1] < 2:
-                    x_la_anterior = x_la
-                    novo_x_min = x_la_anterior + 100
-                    novo_x_max = novo_x_min + 400
-                    x_la = randint(novo_x_min, novo_x_max)
-                    y_la = randint(250, 300)
-                    # Cria um NOVO objeto lã e o adiciona
-                    la = Coletavel(x_la, y_la, 0) #MUDEI AQUIIII AAAAA
-                    sprites.add(la)
-                else:
-                    # Se 2 lãs foram coletadas, move o sprite para fora da tela
-                    la.rect.x = -5000
-                    la.rect.y = -5000
-            if gato.rect.colliderect(rato.rect):
-                rato.rato(contador) # Chama método que incrementa a contagem de lãs
-                # Lógica de respawn da Lã (até 2)
-                if contador[2] < 2:
-                    x_rato_anterior = x_rato
-                    novo_x_min = x_rato_anterior + 100
-                    novo_x_max = novo_x_min + 400
-                    x_rato = randint(novo_x_min, novo_x_max)
-                    y_rato = randint(250, 300)
-                    # Cria um NOVO objeto lã e o adiciona
+            # --- LÓGICA DE COLISÃO UNIFICADA COM MUDANÇA DE CENÁRIO ---
+            if item_ativo and gato.rect.colliderect(item_ativo.rect):
+                # 1. Identifica a fase atual
+                dados_fase = fases_itens[indice_fase]
+                
+                # 2. Coleta o item
+                item_ativo.coletar_generico(contador, dados_fase["cnt_idx"])
+                
+                # 3. Verifica se bateu a meta
+                qtd_atual = contador[dados_fase["cnt_idx"]]
+                
+                if qtd_atual < dados_fase["meta"]:
+                    # --- AINDA NA MESMA FASE: RESPAWN ---
+                    novo_x = gato.rect.x + randint(400, 900)
+                    novo_y = randint(300, 450)
+                    item_ativo = Coletavel(novo_x, novo_y, dados_fase["img_idx"])
+                    sprites.add(item_ativo)
                     
-                    rato = Coletavel(x_rato, y_rato, 2) #MUDEI AQUIIII AAAAA
-                    sprites.add(rato)
                 else:
-                    # Se 2 lãs foram coletadas, move o sprite para fora da tela
-                    rato.rect.x = -5000
-                    rato.rect.y = -5000
-            # --- Lógica de Mudança de Fase (Cenário) ---
-            if cenario1 and las == 3: # Se o cenario1 estiver ativo e las (lãs) for 3
-                cenario = 2
-                vidas = 3
-                # Carrega o novo fundo (com novas vidas)
-                imagem_fundo = pygame.image.load(f'Telas/tela{cenario}_vidas{vidas}.png').convert()
-                cenario2 = True 
-            if cenario2 and camas == 3: # Lógica para ir para o cenário 3
-                cenario = 3
-                vidas = 3
-                imagem_fundo = pygame.image.load(f'Telas/tela{cenario}_vidas{vidas}.png').convert()
-                cenario3 = True
-            # --- Lógica de Fim de Jogo / Vitória ---
-            if ratos == 3: # Se o contador de "ratos" (vitória) for 3
-                imagens_tela_vitoria = { # Define as opções de vitória
-                    0: pygame.image.load('Telas/tela_vitoria_recomecar.png').convert(),    
-                    1: pygame.image.load('Telas/tela_vitoria_sair.png').convert(),  
-                }
-                estado = 'Menu' # Tenta retornar ao estado de menu
-                opcao = 0 
+                    # --- FASE CONCLUÍDA: MUDANÇA DE FASE E CENÁRIO ---
+                    indice_fase += 1 # Avança o índice (ex: de 0 vai para 1)
+                    
+                    if indice_fase < len(fases_itens):
+                        # A. Carrega o item da nova fase
+                        dados_fase = fases_itens[indice_fase]
+                        novo_x = gato.rect.x + randint(400, 900)
+                        novo_y = randint(300, 450)
+                        item_ativo = Coletavel(novo_x, novo_y, dados_fase["img_idx"])
+                        sprites.add(item_ativo)
+                        
+                        # B. MUDANÇA DE CENÁRIO (O que você pediu!)
+                        # Se indice_fase agora é 1 (segunda fase), o cenario deve ser 2.
+                        cenario = indice_fase + 1 
+                        vidas = 3 # Reseta as vidas ao mudar de fase (opcional)
+                        
+                        # Carrega o novo fundo
+                        print(f"Mudando para Cenário {cenario}!")
+                        imagem_fundo = pygame.image.load(f'Telas/tela{cenario}_vidas{vidas}.png').convert()
+                        
+                        # Reseta posições se necessário (ex: tirar gato de buraco)
+                        # gato.rect.y = 400 
+
+                    else:
+                        # --- VITÓRIA (O JOGO ACABOU) ---
+                        print("VOCÊ GANHOU!")
+                        estado = 'Menu' # Tenta retornar ao estado de menu
+                        opcao = 0
+                        break
                 n_opcoes = len(imagens_tela_vitoria)
                 # REPETIÇÃO DE EVENTOS para a tela de vitória (Problema de Loop Aninhado)
                 for event in pygame.event.get():
@@ -272,6 +285,11 @@ while True:
             tela.blit(texto3,(350,10))
             sprites.update() # Atualiza os sprites (Novamente, antes do flip)
             pygame.display.flip() # Atualiza a tela (dentro do loop interno)
+    
+    elif estado == 'Vitoria':
+        # Desenha a tela de vitória
+        imagem_atual = imagens_tela_vitoria[opcao]
+        tela.blit(imagem_atual, (0, 0))
     # Lógica para SAIR do programa (Se o estado for 'Sair' no loop externo)
     elif estado == 'Sair':
         pygame.quit()

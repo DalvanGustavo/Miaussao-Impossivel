@@ -1,40 +1,40 @@
 import pygame
+
 class Coletavel(pygame.sprite.Sprite):
-    def __init__(self, x, y, indice):
+    # Lista estática para guardar as imagens carregadas apenas uma vez
+    IMAGENS_CACHE = []
+
+    def __init__(self, x, y, indice_imagem):
         super().__init__()
 
-        #carregando imagens
-        self.imagens = []
-        for i in range(3):
-            img = pygame.image.load(f'Sprites/coletavel_{i + 1}.png').convert_alpha()
-            img = pygame.transform.scale(img, (64, 64))
-            self.imagens.append(img)
+        # --- CORREÇÃO: Carrega as imagens SOMENTE se a lista estiver vazia ---
+        if not Coletavel.IMAGENS_CACHE:
+            try:
+                for i in range(1, 4): # Tenta carregar coletavel_1, coletavel_2, coletavel_3
+                    img = pygame.image.load(f'Sprites/coletavel_{i}.png').convert_alpha()
+                    img = pygame.transform.scale(img, (64, 64))
+                    Coletavel.IMAGENS_CACHE.append(img)
+            except Exception as e:
+                print(f"Erro ao carregar imagens do coletável: {e}")
+                # Cria um quadrado vermelho de erro caso não ache a imagem
+                erro_surf = pygame.Surface((64, 64))
+                erro_surf.fill((255, 0, 0))
+                Coletavel.IMAGENS_CACHE = [erro_surf, erro_surf, erro_surf]
 
-        #definindo imagem
-        self.image = self.imagens[indice]
+        # --- evitar erro de índice ---
+        if 0 <= indice_imagem < len(Coletavel.IMAGENS_CACHE):
+            self.image = Coletavel.IMAGENS_CACHE[indice_imagem]
+        else:
+            self.image = Coletavel.IMAGENS_CACHE[0]
 
-        #posicionamento
-        self.x = x # Coordenada de MUNDO X (fixa)
-        self.y = y # Coordenada de MUNDO Y (fixa)
-        
+        # Posicionamento
         self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y) # Inicializa o rect na posição de mundo    
-        self.coletado = False  # flag para evitar print repetido
-    
-    def peixe(self, contador):
-        if not self.coletado:
-            self.coletado = True
-            contador[0] += 1  # Incrementa o contador 
-            self.kill()
+        self.rect.topleft = (x, y)
+        self.coletado = False
 
-    def la(self, contador):
+    def coletar_generico(self, contador, indice_contador):
+        # Verifica se já foi coletado para evitar contagem dupla num mesmo frame
         if not self.coletado:
             self.coletado = True
-            contador[1] += 1  # Incrementa o contador  
-            self.kill()
-
-    def rato(self, contador):
-        if not self.coletado:
-            self.coletado = True
-            contador[2] += 1  # Incrementa o contador  
-            self.kill()
+            contador[indice_contador] += 1
+            self.kill() # Remove este objeto dos grupos de sprites
