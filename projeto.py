@@ -6,7 +6,6 @@ pygame.init()
 
 largura = 1080
 altura = 720 
-
 tela = pygame.display.set_mode((largura, altura))
 pygame.display.set_caption('Miaussão Impossível')
 
@@ -72,7 +71,7 @@ while True:
         cenario2 = False
         cenario3 = False 
 
-        imagem_fundo = pygame.image.load(f'Telas/tela{cenario}_vidas{vidas}.png').convert()
+        imagem_fundo = pygame.image.load(f'Telas/tela{cenario}.png').convert()
         tela.blit(imagem_fundo, (0, 0))
 
         class Gato(pygame.sprite.Sprite):
@@ -116,12 +115,27 @@ while True:
 
         while True:
             relogio.tick(30)
+
+            if vidas == 3:
+                imagem_vidas = pygame.image.load('Telas/vidas3.png').convert_alpha()
+            
+            elif vidas == 2:
+                imagem_vidas = pygame.image.load('Telas/vidas2.png').convert_alpha()
+            
+            elif vidas == 1:
+                imagem_vidas = pygame.image.load('Telas/vidas1.png').convert_alpha()
+            
+            rect_imagem = imagem_vidas.get_rect()
+            rect_imagem.bottomright = (largura - 40, 85)
+
             for event in pygame.event.get():
                 if event.type == QUIT:
                     pygame.quit()
                     exit()
     
             tela.blit(imagem_fundo, (0, 0))
+            tela.blit(imagem_vidas, rect_imagem)
+
             sprites.draw(tela)
             if pygame.key.get_pressed()[K_RIGHT] or pygame.key.get_pressed()[K_d]:
                 gato.andar_direita()
@@ -135,13 +149,13 @@ while True:
             if cenario1 and las == 3:
                 cenario = 2
                 vidas = 3
-                imagem_fundo = pygame.image.load(f'Telas/tela{cenario}_vidas{vidas}.png').convert()
+                imagem_fundo = pygame.image.load(f'Telas/tela{cenario}.png').convert()
                 cenario2 = True 
 
             if cenario2 and camas == 3:
                 cenario = 3
                 vidas = 3
-                imagem_fundo = pygame.image.load(f'Telas/tela{cenario}_vidas{vidas}.png').convert()
+                imagem_fundo = pygame.image.load(f'Telas/tela{cenario}.png').convert()
                 cenario3 = True
 
             if ratos == 3:
