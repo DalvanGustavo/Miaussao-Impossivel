@@ -16,15 +16,15 @@ class Coletavel(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y) # Inicializa o rect na posição de mundo    
         self.coletado = False  # flag para evitar print repetido
-    def cama(self, contador):
-        if not self.coletado:
-            self.coletado = True
-            contador[0] += 1  # Incrementa o contador 
-            self.kill()
     def la(self, contador):
         if not self.coletado:
             self.coletado = True
-            contador[1] += 1  # Incrementa o contador  
+            contador[0] += 1  # Incrementa o contador  
+            self.kill()
+    def cama(self, contador):
+        if not self.coletado:
+            self.coletado = True
+            contador[1] += 1  # Incrementa o contador 
             self.kill()
     def rato(self, contador):
         if not self.coletado:

@@ -1,4 +1,5 @@
 import pygame
+import time
 from gato import Gato       # Importa a classe Gato (presumivelmente o personagem principal)
 from coletavel import Coletavel # Importa a classe Coletavel (itens como camas e lã)
 from obstáculos import Obstaculos # Importa os obstáculos
@@ -26,21 +27,9 @@ CAMERA_X_INICIAL = 0        # Posição X inicial da câmera
 gato = Gato()               # Cria a instância do personagem principal
 POSICAO_LIMITE_INICIAL = gato.rect.centerx # Limite esquerdo para o gato não andar para trás
 # --- Criação dos Coletáveis Iniciais ---
-# Calcula posições iniciais aleatórias para a Lã
-x_la = randint(gato.rect.centerx*2+1, 1080)
-y_la = randint(400, 450)
-la = Coletavel(x_la, y_la, 0) # Cria a Lã (assumindo cor RGB vermelha)
-# Calcula posições iniciais aleatórias para o cama
-x_cama = randint(gato.rect.centerx*2, 1080)
-y_cama = randint(400, 450)
-cama = Coletavel(x_cama, y_cama, 1) # Cria o cama (assumindo cor RGB azul)
-x_rato = randint(gato.rect.centerx*2+2, 1080)
-y_rato = randint(400, 450)
-rato = Coletavel(x_rato, y_rato, 2) # Cria o Rato (assumindo cor RGB verde)
 # --- Variáveis de Interface e Pontuação ---
 font = pygame.font.SysFont(None, 36) # Define a fonte para textos
-contador = [0, 0, 0] # Contador: [0] para camas, [1] para Lãs
-sprites.add(gato, cama, la, rato) # Adiciona todos os objetos visuais ao grupo de sprites
+sprites.add(gato) # Adiciona todos os objetos visuais ao grupo de sprites
 pygame.display.set_caption('Miaussão Impossível') # Define o título da janela
 # --- Configuração das Telas de Estado (Menu) ---
 imagens_tela_inicio = {
@@ -96,16 +85,60 @@ while True:
     elif estado == 'Instruções':
         # Desenha a tela de instruções
         tela.blit(imagem_instrucoes, (0, 0))
+    elif estado == 'Vitoria':
+    # Define o dicionário (melhor carregar isso fora do loop lá no início do código)
+        imagens_tela_vitoria = {
+            0: pygame.image.load('Telas/tela_vitoria_recomecar.png').convert(),    
+            1: pygame.image.load('Telas/tela_vitoria_sair.png').convert(),  
+        }
+        for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    exit()
+                if event.type == KEYDOWN:
+                    if event.key == K_s or event.key == K_DOWN:
+                        opcao = (opcao + 1) % n_opcoes
+                    elif event.key == K_w or event.key == K_UP:
+                        opcao = (opcao - 1 + n_opcoes) % n_opcoes
+                    elif event.key == K_RETURN:
+                        if opcao == 0:
+                            estado = 'Jogo'
+                        elif opcao == 1:
+                            estado = 'Sair'
+        tela.blit(imagens_tela_vitoria[opcao], (0, 0))
+    elif estado == 'Derrota':
+        # Define o dicionário (melhor carregar isso fora do loop lá no início do código)
+        imagens_tela_derrota = {
+            0: pygame.image.load('Telas/tela_gameover_recomecar.png').convert(),    
+            1: pygame.image.load('Telas/tela_gameover_sair.png').convert(),  
+        }
+        for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    exit()
+                if event.type == KEYDOWN:
+                    if event.key == K_s or event.key == K_DOWN:
+                        opcao = (opcao + 1) % n_opcoes
+                    elif event.key == K_w or event.key == K_UP:
+                        opcao = (opcao - 1 + n_opcoes) % n_opcoes
+                    elif event.key == K_RETURN:
+                        if opcao == 0:
+                            estado = 'Jogo'
+                        elif opcao == 1:
+                            estado = 'Sair'
+        tela.blit(imagens_tela_derrota[opcao], (0, 0))
     elif estado == 'Jogo':
         # --- Configurações de Estado ao ENTRAR no Jogo (Problema: Essas variáveis resetam a cada frame!) ---
+        gato.rect.centerx = 100 # Reseta a posição do gato
+        x_la = randint(gato.rect.centerx*2+1, 1080)
+        y_la = randint(400, 450)
+        la = Coletavel(x_la, y_la, 0) # Cria a Lã (assumindo cor RGB vermelha)
         cenario = 1
         vidas = 3
-        las = 0
-        camas = 0
-        ratos = 0
-        cenario1 = True 
-        cenario2 = False
-        cenario3 = False 
+        cont = 0
+        acabou_la = False
+        acabou_cama = False
+        contador = [0, 0, 0] # Contador: [0] para camas, [1] para Lãs
         # Variáveis de fundo e câmera
         largura_fundo = largura
         pos_mundo_fundo = 0
@@ -124,7 +157,9 @@ while True:
                 rect_imagem.bottomright = (largura - 40, 85)
                 tela.blit(imagem_vidas, rect_imagem)
             else:
-                pass # Sai do loop do jogo se as vidas acabarem
+                estado = 'Derrota'
+                time.sleep(0.5) # Pausa por 0.5 segundos antes de mudar de estado
+                break # Sai do loop do jogo se as vidas acabarem
             # --- Checagem de Eventos REPETIDA (Necessária devido ao loop interno) ---
             for event in pygame.event.get():
                 if event.type == QUIT:
@@ -209,101 +244,81 @@ while True:
             for obs in grupo_obstaculos:
                 if obs.rect.x < camera_x - 100:
                     obs.kill()
-            # --- Lógica de Colisão (cama) ---
-            if gato.rect.colliderect(cama.rect):
-                cama.cama(contador) # Chama método que incrementa a contagem de camas
-                # Lógica de respawn do cama (até 3)
-                if contador[0] < 3:
-                    cenario = 2
-                    x_cama_anterior = x_cama
-                    novo_x_min = x_cama_anterior + 100
-                    novo_x_max = novo_x_min + 400
-                    x_cama = randint(novo_x_min, novo_x_max)
-                    y_cama = randint(250, 300)
-                    # Cria um NOVO objeto cama e o adiciona
-                    cama = Coletavel(x_cama, y_cama, 1)
-                    sprites.add(cama)
-                else:
-                    # Se 3 camas foram coletados, move o sprite para fora da tela
-                    cama.rect.x = -5000 
-                    cama.rect.y = -5000
             # --- Lógica de Colisão (Lã) ---
             if gato.rect.colliderect(la.rect):
                 la.la(contador) # Chama método que incrementa a contagem de lãs
-                # Lógica de respawn da Lã (até 2)
-                if contador[1] < 2:
+                # Lógica de respawn da Lã (até 5)
+                if contador[0] < 5:
                     x_la_anterior = x_la
                     novo_x_min = x_la_anterior + 100
                     novo_x_max = novo_x_min + 400
                     x_la = randint(novo_x_min, novo_x_max)
                     y_la = randint(250, 300)
                     # Cria um NOVO objeto lã e o adiciona
-                    la = Coletavel(x_la, y_la, 1)
+                    la = Coletavel(x_la, y_la, 0)
                     sprites.add(la)
                 else:
+                    acabou_la = True
+                    cenario += 1
                     # Se 2 lãs foram coletadas, move o sprite para fora da tela
                     la.rect.x = -5000
                     la.rect.y = -5000
-            if gato.rect.colliderect(rato.rect):
-                rato.rato(contador) # Chama método que incrementa a contagem de lãs
-                # Lógica de respawn da Lã (até 2)
-                if contador[2] < 2:
-                    x_rato_anterior = x_rato
-                    novo_x_min = x_rato_anterior + 100
-                    novo_x_max = novo_x_min + 400
-                    x_rato = randint(novo_x_min, novo_x_max)
-                    y_rato = randint(250, 300)
-                    # Cria um NOVO objeto lã e o adiciona
-                    rato = Coletavel(x_rato, y_rato, 2)
-                    sprites.add(rato)
-                else:
-                    # Se 2 lãs foram coletadas, move o sprite para fora da tela
-                    rato.rect.x = -5000
-                    rato.rect.y = -5000
-            # --- Lógica de Mudança de Fase (Cenário) ---
-            if cenario1 and las == 3: # Se o cenario1 estiver ativo e las (lãs) for 3
-                cenario = 2
-                vidas = 3
-                # Carrega o novo fundo (com novas vidas)
-                imagem_fundo = pygame.image.load(f'Telas/tela{cenario}.png').convert()
-                cenario2 = True 
-            if cenario2 and camas == 3: # Lógica para ir para o cenário 3
-                cenario = 3
-                vidas = 3
-                imagem_fundo = pygame.image.load(f'Telas/tela{cenario}.png').convert()
-                cenario3 = True
-            # --- Lógica de Fim de Jogo / Vitória ---
-            if ratos == 3: # Se o contador de "ratos" (vitória) for 3
-                imagens_tela_vitoria = { # Define as opções de vitória
-                    0: pygame.image.load('Telas/tela_vitoria_recomecar.png').convert(),    
-                    1: pygame.image.load('Telas/tela_vitoria_sair.png').convert(),  
-                }
-                estado = 'Menu' # Tenta retornar ao estado de menu
-                opcao = 0 
-                n_opcoes = len(imagens_tela_vitoria)
-                # REPETIÇÃO DE EVENTOS para a tela de vitória (Problema de Loop Aninhado)
-                for event in pygame.event.get():
-                    if event.type == QUIT:
-                        pygame.quit()
-                        exit()
-                    if event.type == KEYDOWN:
-                        if estado == 'Menu':
-                            # Lógica para navegação no menu de vitória
-                            if event.key == K_s or event.key == K_DOWN:
-                                opcao = (opcao + 1) % n_opcoes
-                            elif event.key == K_w or event.key == K_UP:
-                                opcao = (opcao - 1 + n_opcoes) % n_opcoes
-                            elif event.key == K_RETURN:
-                                if opcao == 0:
-                                    estado = 'Jogo'
-                                elif opcao == 1:
-                                    estado = 'Sair'
-            texto = font.render(f"camas: {contador[0]}", True, (0,0,0))
+            # --- Lógica de Colisão (cama) ---
+            if acabou_la:
+                if cont == 0:
+                    x_cama = randint(x_la, gato.rect.centerx*2)
+                    y_cama = randint(400, 450)
+                    cama = Coletavel(x_cama, y_cama, 1) # Cria o cama (assumindo cor RGB azul)
+                cont = 1
+                if gato.rect.colliderect(cama.rect):
+                    cama.cama(contador) # Chama método que incrementa a contagem de camas
+                    # Lógica de respawn do cama (até 5)
+                    if contador[1] < 5:
+                        x_cama_anterior = x_cama
+                        novo_x_min = x_cama_anterior + 100
+                        novo_x_max = novo_x_min + 400
+                        x_cama = randint(novo_x_min, novo_x_max)
+                        y_cama = randint(250, 300)
+                        # Cria um NOVO objeto cama e o adiciona
+                        cama = Coletavel(x_cama, y_cama, 1)
+                        sprites.add(cama)
+                    else:
+                        acabou_cama = True
+                        cenario += 1
+                        acabou_la = False
+                        cont = 0
+                        # Se 3 camas foram coletados, move o sprite para fora da tela
+                        cama.rect.x = -5000 
+                        cama.rect.y = -5000
+            if acabou_cama:
+                if cont == 0:
+                    x_rato = randint(x_cama, gato.rect.centerx*2+2)
+                    y_rato = randint(400, 450)
+                    rato = Coletavel(x_rato, y_rato, 2) # Cria o Rato (assumindo cor RGB verde)
+                cont = 1
+                if gato.rect.colliderect(rato.rect):
+                    rato.rato(contador) # Chama método que incrementa a contagem de ratos
+                    # Lógica de respawn do Rato (até 5)
+                    if contador[2] < 5:
+                        x_rato_anterior = x_rato
+                        novo_x_min = x_rato_anterior + 100
+                        novo_x_max = novo_x_min + 400
+                        x_rato = randint(novo_x_min, novo_x_max)
+                        y_rato = randint(250, 300)
+                        # Cria um NOVO objeto lã e o adiciona
+                        rato = Coletavel(x_rato, y_rato, 2)
+                        sprites.add(rato)
+                    else:
+                        estado = 'Vitoria'
+                        time.sleep(0.5) # Pausa por 0.5 segundos antes de mudar de estado
+                        break
+            imagem_fundo = pygame.image.load(f'Telas/tela{cenario}.png').convert()
+            texto = font.render(f"Lã: {contador[0]}", True, (0,0,0))
             tela.blit(texto, (10,10))
-            texto2 = font.render(f"Lã: {contador[1]}", True,(0,0,0) )
-            tela.blit(texto2,(200,10))
+            texto2 = font.render(f"Cama: {contador[1]}", True,(0,0,0) )
+            tela.blit(texto2,(100,10))
             texto3 = font.render(f"Rato: {contador[2]}", True,(0,0,0) )
-            tela.blit(texto3,(350,10))
+            tela.blit(texto3,(230,10))
             sprites.update() # Atualiza os sprites (Novamente, antes do flip)
             pygame.display.flip() # Atualiza a tela (dentro do loop interno)
     # Lógica para SAIR do programa (Se o estado for 'Sair' no loop externo)
