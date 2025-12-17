@@ -117,13 +117,13 @@ while True:
             relogio.tick(30)
 
             if vidas == 3:
-                imagem_vidas = pygame.image.load('Telas/vidas3.png').convert_alpha()
+                imagem_vidas = pygame.image.load('Sprites/vidas3.png').convert_alpha()
             
             elif vidas == 2:
-                imagem_vidas = pygame.image.load('Telas/vidas2.png').convert_alpha()
+                imagem_vidas = pygame.image.load('Sprites/vidas2.png').convert_alpha()
             
             elif vidas == 1:
-                imagem_vidas = pygame.image.load('Telas/vidas1.png').convert_alpha()
+                imagem_vidas = pygame.image.load('Sprites/vidas1.png').convert_alpha()
             
             rect_imagem = imagem_vidas.get_rect()
             rect_imagem.bottomright = (largura - 40, 85)
@@ -195,3 +195,4 @@ while True:
         exit()
 
     pygame.display.flip()
+
