@@ -24,14 +24,12 @@ class Obstaculos(pygame.sprite.Sprite):
         else:
             # outros obstáculos
             self.velocidade = 0
+        self.rect.x = 1080
         if self.tipo == 0 or self.tipo == 1 or self.tipo == 4:
-            self.rect.x = 1080
             self.rect.y = 450
         elif self.tipo == 2:
-            self.rect.x = 1080
             self.rect.y = 530
         else:
-            self.rect.x = 1080
             self.rect.y = 400
     def update(self):
         # todos vão para a esquerda
