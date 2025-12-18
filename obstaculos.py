@@ -8,6 +8,8 @@ class Obstaculos(pygame.sprite.Sprite):
             img = pygame.image.load(f'Sprites/obstaculo_{i}.png').convert_alpha()
             if i == 3:
                 img_redimensionada = pygame.transform.scale(img, (250, 150))
+            elif i == 4:
+                img_redimensionada = pygame.transform.scale(img, (60, 60))
             else:
                 img_redimensionada = pygame.transform.scale(img, (150, 150))
             self.imagens.append(img_redimensionada)
@@ -18,7 +20,7 @@ class Obstaculos(pygame.sprite.Sprite):
         # comportamento por tipo
         if self.tipo == 3:
             # bola lançada
-            self.velocidade = random.randint(2, 4)
+            self.velocidade = random.randint(4, 6)
             # bola lançada (voando)
             self.rect.y = random.randint(350, 480)
         else:
@@ -29,8 +31,6 @@ class Obstaculos(pygame.sprite.Sprite):
             self.rect.y = 450
         elif self.tipo == 2:
             self.rect.y = 530
-        else:
-            self.rect.y = 400
     def update(self):
         # todos vão para a esquerda
         self.rect.x -= self.velocidade
