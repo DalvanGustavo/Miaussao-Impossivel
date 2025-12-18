@@ -37,7 +37,7 @@ pip install pygame
 
 2. Clone o repositório que está armazenando as informações:
 ```
-git clone https://github.com/seu-usuario/projeto-ip.git
+git clone https://github.com/DalvanGustavo/Miaussao-Impossivel.git
 cd Miaussao-Impossivel
 ```
 
