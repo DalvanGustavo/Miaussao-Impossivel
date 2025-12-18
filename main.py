@@ -7,7 +7,11 @@ from coletavel import Coletavel
 from obstaculos import Obstaculos
 from pygame.locals import *
 pygame.init()
-musica_fundo = pygame.mixer.music.load('Sons/musica_fundo.mp3')
+pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.load('Sons/som-background(run).mp3')
+pygame.mixer.music.play(-1)  # Toca a música em loop
+musica_coletavel = pygame.mixer.Sound('Sons/som-coletável.wav')
+musica_obstaculos = pygame.mixer.Sound('Sons/som-bater-em-obstáculos.wav')
 # --- Configurações da Tela ---
 LARGURA = 1080
 ALTURA = 720
@@ -76,6 +80,9 @@ n_opcoes = len(imagens_tela_inicio)
 timer_tela_preta = 0
 # --- Função auxiliar para (re)iniciar o jogo ---
 def iniciar_jogo():
+    pygame.mixer.music.stop()
+    pygame.mixer.music.load('Sons/som-background(run).mp3')
+    pygame.mixer.music.play(-1)  # Toca a música em loop
     global sprites, grupo_obstaculos, item_ativo, indice_fase
     global contador, cenario, vidas, camera_x, pos_mundo_fundo, imagem_fundo
     sprites.empty()
@@ -211,21 +218,19 @@ while running:
     elif estado == 'Derrota':
         tela.blit(imagens_tela_derrota[opcao], (0, 0))
     elif estado == 'Final_Caminhada':
-        # 1. Desenha o fundo fixo
         tela.blit(imagem_fundo, (0, 0))
-        # 2. Movimentação automática
-        gato.rect.x += 5  # Velocidade da caminhada
+        gato.rect.x += 5  
         gato.andar_direita()
         gato.update()
-        # 3. Desenha o gato
         tela.blit(gato.image, (gato.rect.x, gato.rect.y - 10))
-        # 4. Condição de Finalização com Pausa
-        if gato.rect.left > LARGURA - 500:
-            # Mostra o último frame (cenário vazio) antes da pausa
+        if gato.rect.left > LARGURA - 500: # Quando sair totalmente da tela
             pygame.display.flip() 
-            # Pausa dramática de 500ms (meio segundo)
-            pygame.time.delay(500) 
-            # Muda para a tela de Vitória
+            # Troca de música para vitória
+            time.sleep(1)  # Pequena pausa antes de mudar de estado 
+            pygame.mixer.music.stop()
+            pygame.mixer.music.load('Sons/background-_win_.wav')
+            pygame.mixer.music.play(-1)
+            pygame.time.delay(500)
             estado = 'Vitoria'
             opcao = 0
             n_opcoes = len(imagens_tela_vitoria)
@@ -290,9 +295,11 @@ while running:
             pos_tela_y = sprite.rect.y - 10  # camera_y fixo 10 no original
             tela.blit(sprite.image, (pos_tela_x, pos_tela_y))
         # colisões com obstaculos (cada colisão diminui vidas)
-        colisoes = pygame.sprite.spritecollide(gato, grupo_obstaculos, True)
-        for obstaculo in colisoes:
-            vidas -= 1
+        if not em_camera_lenta:
+            colisoes = pygame.sprite.spritecollide(gato, grupo_obstaculos, True)
+            for obstaculo in colisoes:
+                musica_obstaculos.play()
+                vidas -= 1
         # desenha vidas (carregar imagem a cada alteração é ok, mas vamos tentar cache simples)
         if vidas:
             imagem_vidas = pygame.image.load(f'Sprites/vidas{vidas}.png').convert_alpha()
@@ -300,10 +307,14 @@ while running:
             rect_imagem.bottomright = (LARGURA - 40, 85)
             tela.blit(imagem_vidas, rect_imagem)
         if vidas <= 0:
+            # Para a música de ação e toca a de derrota
+            time.sleep(1)  # Pequena pausa antes de mudar de estado
+            pygame.mixer.music.stop()
+            pygame.mixer.music.load('Sons/background-_game-over_.wav') # Ajuste o caminho se necessário
+            pygame.mixer.music.play(-1)
             estado = 'Derrota'
             opcao = 0
             n_opcoes = len(imagens_tela_derrota)
-            time.sleep(0.5)  # pausa breve antes de mudar de estado
         # --- Lógica de Respawn se o item saiu da tela pela esquerda ---
         if item_ativo and item_ativo.rect.right < camera_x:
             # O item saiu da tela, então removemos ele
@@ -350,7 +361,7 @@ while running:
                         if item_ativo:
                             item_ativo.kill()
                             item_ativo = None
-                    
+            musica_coletavel.play()
         # textos de HUD 
         tela.blit(icone_la, (10, 10))  
         texto_la = font.render(f"{contador[0]}", True, (0, 0, 0))
