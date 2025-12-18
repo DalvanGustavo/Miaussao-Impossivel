@@ -7,6 +7,7 @@ from coletavel import Coletavel
 from obstaculos import Obstaculos
 from pygame.locals import *
 pygame.init()
+musica_fundo = pygame.mixer.music.load('Sons/musica_fundo.mp3')
 # --- Configurações da Tela ---
 LARGURA = 1080
 ALTURA = 720
