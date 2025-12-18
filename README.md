@@ -15,6 +15,20 @@ O projeto consiste na criação de um jogo 2D em Python, no qual um gato se perd
 ![e71c1ade-d297-478b-8714-7456c07f41db](https://github.com/user-attachments/assets/7aaf21b0-2086-47e3-accb-b0a2e7feb29e)
 ![c08fcff9-6037-47c7-8c11-eff38b440cf3](https://github.com/user-attachments/assets/a0bd031c-04e8-47f8-8180-793dfcff2659)
 
+## 🖥️ Instalação do Jogo
+1. Instale git e configure:
+>[Git](https://git-scm.com/install/)
+
+2. Instale PyGame:
+>pip install pygame
+
+3. Clone o repositório que está armazenando as informações:
+>git clone https://github.com/seu-usuario/projeto-ip.git
+>cd Miaussao-Impossivel
+
+4. Execute o jogo:
+>python main.py
+
 ## 🛠️ Ferramentas e Justificativas
 * **Python** - Linguagem utilizada na codificação do jogo
 * **PyGame** - Biblioteca utilizada para o desenvolvimento do jogo. Escolhida por ser uma biblioteca amplamente utilizada para jogos em Python e por oferecer funcionalidades necessárias para a realização do projeto
