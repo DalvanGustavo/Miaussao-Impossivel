@@ -6,6 +6,7 @@ O projeto consiste na criação de um jogo 2D em Python, no qual um gato se perd
 ## 🏛️ Arquitetura
 
 ## 📸 Capturas de Tela
+<img src="blob:https://web.whatsapp.com/8bccdff8-c522-499a-8173-a20f2eff0aee" alt="Tela Iniciar">
 
 ## 🛠️ Ferramentas e Justificativas
 * **Python** - Linguagem utilizada na codificação do jogo
