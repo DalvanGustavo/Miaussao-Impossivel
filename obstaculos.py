@@ -22,7 +22,7 @@ class Obstaculos(pygame.sprite.Sprite):
             # bola lançada (voando)
             self.rect.y = random.randint(350, 480)
         else:
-            # outros obstáculos
+            # outros obstaculos
             self.velocidade = 0
         self.rect.x = 1080
         if self.tipo == 0 or self.tipo == 1 or self.tipo == 4:
