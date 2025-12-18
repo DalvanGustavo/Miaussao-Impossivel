@@ -4,7 +4,21 @@
 O projeto consiste na criação de um jogo 2D em Python, no qual um gato se perdeu e precisa encontrar o seu caminho para casa. Existem 3 fases no jogo e, para passar delas, você precisa coletar 3 itens de cada tipo para passar de fase e chegar ao seu destino final, porém existirão obstáculos e o usuário deve tomar cuidado para não perder todas as vidas. O projeto é baseado nos princípios de **Programação Orientada a Objetos (POO)**.
 
 ## 🏛️ Arquitetura
+```
+📂 Sons                         # Sons do Jogo
+📂 Sprites                      # Imagens das Sprites
+📂 Telas                        # Imagens das Telas
+📂 __pycache__                  # Câmera Lenta/Tela Final 
+📂 build/Miaussao_Impossivel    # Arquivo executável 
+📂 dist/Miaussao_Impossivel     # Arquivo executável 
+📂 Miaussao_Impossivel.spec     # Arquivo executável 
+📂 README.md                    # Relatório do Projeto
+📂 coletavel.py                 # Lógica dos coletáveis
+📂 gato.py                      # Classe do Gato 
+📂 main.py                      # Código-Fonte do Jogo
+📂 obstaculos.py                # Lógica dos obstáculos 
 
+```
 ## 📸 Capturas de Tela
 ![28f1450b-c31c-462d-bc65-c8207f4cee23](https://github.com/user-attachments/assets/d862ee09-55f1-4dac-abff-a113e1f0d626)
 ![962c7060-8389-424d-8e67-1434bde77ee2](https://github.com/user-attachments/assets/66056597-6391-4d3a-a90a-142e5ef1491f)
