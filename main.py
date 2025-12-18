@@ -111,10 +111,6 @@ fps_jogo = 60          # variável para controlar o tick
 proximo_estado = ''
 while running:
     relogio.tick(fps_jogo)
-    # --- Eventos ---
-    # --- Lógica de Transição de Vitória ---
-    # --- Lógica de Transição de Vitória (Dentro do while, antes dos eventos) ---
-    # --- Dentro do while running, antes dos eventos ---
     if estado == 'Jogo' and em_camera_lenta:
         agora = pygame.time.get_ticks()
         if agora - timer_camera_lenta > duracao_slowmo:
@@ -122,13 +118,11 @@ while running:
             em_camera_lenta = False
             fps_jogo = 60 # Retorna o FPS ao normal para a animação ser fluida
             estado = 'Final_Caminhada'
-            
             # 2. Setup do Cenário Final
             try:
                 imagem_fundo = pygame.image.load('Telas/tela_fim.png').convert()
             except:
                 imagem_fundo.fill((50, 50, 50))
-            
             # Reset do Gato para começar fora da tela à esquerda
             gato.rect.x = -100 
             gato.rect.centery = chao_y
@@ -304,9 +298,6 @@ while running:
             rect_imagem = imagem_vidas.get_rect()
             rect_imagem.bottomright = (LARGURA - 40, 85)
             tela.blit(imagem_vidas, rect_imagem)
-        else:
-            # se falta a imagem, apenas ignore
-            pass
         if vidas <= 0:
             estado = 'Derrota'
             opcao = 0
