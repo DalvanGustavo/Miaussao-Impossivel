@@ -6,7 +6,14 @@ O projeto consiste na criação de um jogo 2D em Python, no qual um gato se perd
 ## 🏛️ Arquitetura
 
 ## 📸 Capturas de Tela
-<img src="https://drive.google.com/file/d/19VFhvh0Qax0NJK85NQP_l5QCuSnLQyeq/view?usp=drive_link" alt="Tela Iniciar">
+![28f1450b-c31c-462d-bc65-c8207f4cee23](https://github.com/user-attachments/assets/d862ee09-55f1-4dac-abff-a113e1f0d626)
+![962c7060-8389-424d-8e67-1434bde77ee2](https://github.com/user-attachments/assets/66056597-6391-4d3a-a90a-142e5ef1491f)
+![29b18345-d971-48b9-a82d-8ae12adc4b67](https://github.com/user-attachments/assets/0980d681-e931-46fe-b745-56ca2122f06a)
+![2cfbb357-abd9-4db1-ab55-1feef77946f1](https://github.com/user-attachments/assets/9e7a0978-e753-41b7-9c8e-016acd9826cf)
+![50542b75-799c-40c2-96fb-180e12e602de](https://github.com/user-attachments/assets/5e8ac8fe-78fd-4fee-a3bd-d0896d302ae7)
+![85086f19-1481-4520-8a1d-d5ec7e6a9b45](https://github.com/user-attachments/assets/23575e64-368c-4416-9a15-123c8f59a9e8)
+![e71c1ade-d297-478b-8714-7456c07f41db](https://github.com/user-attachments/assets/7aaf21b0-2086-47e3-accb-b0a2e7feb29e)
+![c08fcff9-6037-47c7-8c11-eff38b440cf3](https://github.com/user-attachments/assets/a0bd031c-04e8-47f8-8180-793dfcff2659)
 
 ## 🛠️ Ferramentas e Justificativas
 * **Python** - Linguagem utilizada na codificação do jogo
