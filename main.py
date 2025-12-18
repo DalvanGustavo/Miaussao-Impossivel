@@ -72,6 +72,7 @@ pygame.time.set_timer(CRIAR_OBSTACULO, 300)
 estado = 'Menu'
 opcao = 0
 n_opcoes = len(imagens_tela_inicio)
+timer_tela_preta = 0
 # --- Função auxiliar para (re)iniciar o jogo ---
 def iniciar_jogo():
     global sprites, grupo_obstaculos, item_ativo, indice_fase
@@ -103,9 +104,34 @@ camera_x = CAMERA_X_INICIAL
 pos_mundo_fundo = 0
 imagem_fundo = pygame.Surface((LARGURA, ALTURA))  # superfície vazia até começar
 imagem_fundo.fill((135, 206, 235))
+em_camera_lenta = False
+timer_camera_lenta = 0
+duracao_slowmo = 1500  # quanto tempo (ms) dura o efeito (2 segundos)
+fps_jogo = 60          # variável para controlar o tick
+proximo_estado = ''
 while running:
-    relogio.tick(60)
+    relogio.tick(fps_jogo)
     # --- Eventos ---
+    # --- Lógica de Transição de Vitória ---
+    # --- Lógica de Transição de Vitória (Dentro do while, antes dos eventos) ---
+    # --- Dentro do while running, antes dos eventos ---
+    if estado == 'Jogo' and em_camera_lenta:
+        agora = pygame.time.get_ticks()
+        if agora - timer_camera_lenta > duracao_slowmo:
+            # 1. Preparação para a cena final
+            em_camera_lenta = False
+            fps_jogo = 60 # Retorna o FPS ao normal para a animação ser fluida
+            estado = 'Final_Caminhada'
+            
+            # 2. Setup do Cenário Final
+            try:
+                imagem_fundo = pygame.image.load('Telas/tela_fim.png').convert()
+            except:
+                imagem_fundo.fill((50, 50, 50))
+            
+            # Reset do Gato para começar fora da tela à esquerda
+            gato.rect.x = -100 
+            gato.rect.centery = chao_y
     for event in pygame.event.get():
         if event.type == QUIT:
             running = False
@@ -189,11 +215,30 @@ while running:
         tela.blit(imagens_tela_vitoria[opcao], (0, 0))
     elif estado == 'Derrota':
         tela.blit(imagens_tela_derrota[opcao], (0, 0))
+    elif estado == 'Final_Caminhada':
+        # 1. Desenha o fundo fixo
+        tela.blit(imagem_fundo, (0, 0))
+        # 2. Movimentação automática
+        gato.rect.x += 5  # Velocidade da caminhada
+        gato.andar_direita()
+        gato.update()
+        # 3. Desenha o gato
+        tela.blit(gato.image, (gato.rect.x, gato.rect.y - 10))
+        # 4. Condição de Finalização com Pausa
+        if gato.rect.left > LARGURA - 500:
+            # Mostra o último frame (cenário vazio) antes da pausa
+            pygame.display.flip() 
+            # Pausa dramática de 500ms (meio segundo)
+            pygame.time.delay(500) 
+            # Muda para a tela de Vitória
+            estado = 'Vitoria'
+            opcao = 0
+            n_opcoes = len(imagens_tela_vitoria)
     elif estado == 'Jogo':
         # atualizações de movimento / física
         keys = pygame.key.get_pressed()
         # mov horiz
-        if keys[K_RIGHT] or keys[K_d]:
+        if keys[K_RIGHT] or keys[K_d] or em_camera_lenta:
             gato.rect.centerx += velocidade_gato
             gato.andar_direita()
         elif keys[K_LEFT] or keys[K_a]:
@@ -265,8 +310,8 @@ while running:
         if vidas <= 0:
             estado = 'Derrota'
             opcao = 0
-            n_opcoes = len(imagens_tela_derrota) 
-            time.sleep(0.5)
+            n_opcoes = len(imagens_tela_derrota)
+            time.sleep(0.5)  # pausa breve antes de mudar de estado
         # --- Lógica de Respawn se o item saiu da tela pela esquerda ---
         if item_ativo and item_ativo.rect.right < camera_x:
             # O item saiu da tela, então removemos ele
@@ -279,10 +324,11 @@ while running:
             sprites.add(item_ativo)
         # --- Lógica de colisão com o coletável ativo ---
         if item_ativo and gato.rect.colliderect(item_ativo.rect):
-            dados_fase = fases_itens[indice_fase]
-            idx_cnt = dados_fase["cnt_idx"]
-            item_ativo.coletar_generico(contador, idx_cnt)
-            qtd_atual = contador[idx_cnt]
+            if indice_fase < len(fases_itens):
+                dados_fase = fases_itens[indice_fase]
+                idx_cnt = dados_fase["cnt_idx"]
+                item_ativo.coletar_generico(contador, idx_cnt)
+                qtd_atual = contador[idx_cnt]
             if qtd_atual < dados_fase["meta"]:
                 # respawn do mesmo tipo um pouco à frente
                 novo_x = gato.rect.x + randint(400, 900)
@@ -304,14 +350,19 @@ while running:
                     imagem_fundo = pygame.image.load(f'Telas/tela{cenario}.png').convert()
                 else:
                     # vitória completa
-                    estado = 'Vitoria'
-                    opcao = 0
-                    n_opcoes = len(imagens_tela_vitoria)
-                    time.sleep(0.5)
+                    if not em_camera_lenta:
+                        em_camera_lenta = True
+                        fps_jogo = 15
+                        timer_camera_lenta = pygame.time.get_ticks()
+                        proximo_estado = 'Final_Caminhada' 
+                        if item_ativo:
+                            item_ativo.kill()
+                            item_ativo = None
+                    
         # textos de HUD 
         tela.blit(icone_la, (10, 10))  
         texto_la = font.render(f"{contador[0]}", True, (0, 0, 0))
-        tela.blit(texto_la, (65, 35))
+        tela.blit(texto_la, (80, 35))
         tela.blit(icone_cama, (135, 10)) # Desenha o ícone
         texto_cama = font.render(f"{contador[1]}", True, (0, 0, 0))
         tela.blit(texto_cama, (210, 35))
