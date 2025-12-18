@@ -17,17 +17,25 @@ O projeto consiste na criação de um jogo 2D em Python, no qual um gato se perd
 
 ## 🖥️ Instalação do Jogo
 1. Instale git e configure:
-ˋ[Git](https://git-scm.com/install/)ˋ
+```
+[Git](https://git-scm.com/install/)
+```
 
 2. Instale PyGame:
-ˋpip install pygameˋ
+```
+pip install pygame
+```
 
 3. Clone o repositório que está armazenando as informações:
-ˋgit clone https://github.com/seu-usuario/projeto-ip.gitˋ
-ˋcd Miaussao-Impossivelˋ
+```
+git clone https://github.com/seu-usuario/projeto-ip.git
+cd Miaussao-Impossivel
+```
 
 4. Execute o jogo:
-ˋpython main.pyˋ
+```
+python main.py
+```
 
 ## 🛠️ Ferramentas e Justificativas
 * **Python** - Linguagem utilizada na codificação do jogo
