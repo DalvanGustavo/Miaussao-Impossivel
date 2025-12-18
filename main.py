@@ -323,6 +323,18 @@ while running:
             n_opcoes = len(imagens_tela_derrota) 
             time.sleep(0.5)
 
+        # --- Lógica de Respawn se o item saiu da tela pela esquerda ---
+        if item_ativo and item_ativo.rect.right < camera_x:
+            # O item saiu da tela, então removemos ele
+            item_ativo.kill()
+            
+            # E criamos um novo lá na frente (mesma lógica de quando coleta)
+            dados_fase = fases_itens[indice_fase]
+            novo_x = gato.rect.x + randint(500, 900) # Cria à frente do gato
+            novo_y = randint(250, 450)
+            item_ativo = Coletavel(novo_x, novo_y, dados_fase["img_idx"])
+            sprites.add(item_ativo)
+
         # --- Lógica de colisão com o coletável ativo ---
         if item_ativo and gato.rect.colliderect(item_ativo.rect):
             dados_fase = fases_itens[indice_fase]
