@@ -28,4 +28,7 @@ Thiago Ewerton | Sistemas do personagem principal, incluindo movimentação, con
 * **Controle do estado**: Registro e exibição dos coletáveis, uso de condicionais e laços de repetição para criar cenários distintos
 
 ## 📒 Desafios/Erros e Lições Aprendidas
-
+* Ambientação ao Git e ao GitHub;
+* Introdução à Programação Orientada a Objetos (POO);
+* Padronização de Cenários
+* Utilização de Bibliotecas Externas
