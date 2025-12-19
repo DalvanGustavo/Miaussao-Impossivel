@@ -1,5 +1,5 @@
 import pygame
-
+from utils import resource_path
 class Coletavel(pygame.sprite.Sprite):
     """
     Classe Coletavel atualizada.
@@ -16,7 +16,7 @@ class Coletavel(pygame.sprite.Sprite):
         if not Coletavel.IMAGENS_CACHE:
             try:
                 for i in range(1, 4):  # coletavel_1.png .. coletavel_3.png
-                    img = pygame.image.load(f'Sprites/coletavel_{i}.png').convert_alpha()
+                    img = pygame.image.load(resource_path(f'Sprites/coletavel_{i}.png')).convert_alpha()
                     img = pygame.transform.scale(img, (64, 64))
                     Coletavel.IMAGENS_CACHE.append(img)
             except Exception as e:

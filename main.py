@@ -1,17 +1,17 @@
 import pygame
 import time
-from sys import exit
 from random import randint
 from gato import Gato
 from coletavel import Coletavel
 from obstaculos import Obstaculos
 from pygame.locals import *
+from utils import resource_path
 pygame.init()
 pygame.mixer.music.set_volume(0.5)
-pygame.mixer.music.load('Sons/som-background(run).mp3')
+pygame.mixer.music.load(resource_path('Sons/som-background(run).mp3'))
 pygame.mixer.music.play(-1)  # Toca a música em loop
-musica_coletavel = pygame.mixer.Sound('Sons/som-coletável.wav')
-musica_obstaculos = pygame.mixer.Sound('Sons/som-bater-em-obstáculos.wav')
+musica_coletavel = pygame.mixer.Sound(resource_path('Sons/som-coletável.wav'))
+musica_obstaculos = pygame.mixer.Sound(resource_path('Sons/som-bater-em-obstáculos.wav'))
 # --- Configurações da Tela ---
 LARGURA = 1080
 ALTURA = 720
@@ -49,27 +49,27 @@ indice_fase = 0
 font = pygame.font.SysFont(None, 36)
 # --- Carregamento das imagens do Placar (HUD) ---
 tamanho_hud = (64, 64)
-icone_la = pygame.image.load('Sprites/coletavel_1.png').convert_alpha()
+icone_la = pygame.image.load(resource_path('Sprites/coletavel_1.png')).convert_alpha()
 icone_la = pygame.transform.scale(icone_la, tamanho_hud)
-icone_cama = pygame.image.load('Sprites/coletavel_2.png').convert_alpha()
+icone_cama = pygame.image.load(resource_path('Sprites/coletavel_2.png')).convert_alpha()
 icone_cama = pygame.transform.scale(icone_cama, tamanho_hud)
-icone_rato = pygame.image.load('Sprites/coletavel_3.png').convert_alpha()
+icone_rato = pygame.image.load(resource_path('Sprites/coletavel_3.png')).convert_alpha()
 icone_rato = pygame.transform.scale(icone_rato, (48, 64))
 # --- Carregamento de imagens de telas ---
 imagens_tela_inicio = {
-    0: pygame.image.load('Telas/tela_inicio_iniciar.png').convert(),
-    1: pygame.image.load('Telas/tela_inicio_instrucoes.png').convert(),
-    2: pygame.image.load('Telas/tela_inicio_sair.png').convert(),
+    0: pygame.image.load(resource_path('Telas/tela_inicio_iniciar.png')).convert(),
+    1: pygame.image.load(resource_path('Telas/tela_inicio_instrucoes.png')).convert(),
+    2: pygame.image.load(resource_path('Telas/tela_inicio_sair.png')).convert(),
 }
 imagens_tela_vitoria = {
-    0: pygame.image.load('Telas/tela_vitoria_recomecar.png').convert(),
-    1: pygame.image.load('Telas/tela_vitoria_sair.png').convert(),
+    0: pygame.image.load(resource_path('Telas/tela_vitoria_recomecar.png')).convert(),
+    1: pygame.image.load(resource_path('Telas/tela_vitoria_sair.png')).convert(),
 }
 imagens_tela_derrota = {
-    0: pygame.image.load('Telas/tela_gameover_recomecar.png').convert(),
-    1: pygame.image.load('Telas/tela_gameover_sair.png').convert(),
+    0: pygame.image.load(resource_path('Telas/tela_gameover_recomecar.png')).convert(),
+    1: pygame.image.load(resource_path('Telas/tela_gameover_sair.png')).convert(),
 }
-imagem_instrucoes = pygame.image.load('Telas/tela_instrucoes.png').convert()
+imagem_instrucoes = pygame.image.load(resource_path('Telas/tela_instrucoes.png')).convert()
 # --- Evento periódico de criação de obstáculo (a cada 300ms) ---
 CRIAR_OBSTACULO = pygame.USEREVENT + 1
 pygame.time.set_timer(CRIAR_OBSTACULO, 300)
@@ -81,7 +81,7 @@ timer_tela_preta = 0
 # --- Função auxiliar para (re)iniciar o jogo ---
 def iniciar_jogo():
     pygame.mixer.music.stop()
-    pygame.mixer.music.load('Sons/som-background(run).mp3')
+    pygame.mixer.music.load(resource_path('Sons/som-background(run).mp3'))
     pygame.mixer.music.play(-1)  # Toca a música em loop
     global sprites, grupo_obstaculos, item_ativo, indice_fase
     global contador, cenario, vidas, camera_x, pos_mundo_fundo, imagem_fundo
@@ -102,7 +102,7 @@ def iniciar_jogo():
     # câmera/fundo
     camera_x = CAMERA_X_INICIAL
     pos_mundo_fundo = 0
-    imagem_fundo = pygame.image.load(f'Telas/tela{cenario}.png').convert()
+    imagem_fundo = pygame.image.load(resource_path(f'Telas/tela{cenario}.png')).convert()
 # --- Main loop (um só loop, sem while aninhado) ---
 running = True
 # adiciona gato ao grupo de sprites para menu também (por segurança)
@@ -128,7 +128,7 @@ while running:
             estado = 'Final_Caminhada'
             # 2. Setup do Cenário Final
             try:
-                imagem_fundo = pygame.image.load('Telas/tela_fim.png').convert()
+                imagem_fundo = pygame.image.load(resource_path('Telas/tela_fim.png')).convert()
             except:
                 imagem_fundo.fill((50, 50, 50))
             # Reset do Gato para começar fora da tela à esquerda
@@ -228,7 +228,7 @@ while running:
             # Troca de música para vitória
             time.sleep(1)  # Pequena pausa antes de mudar de estado 
             pygame.mixer.music.stop()
-            pygame.mixer.music.load('Sons/background-_win_.wav')
+            pygame.mixer.music.load(resource_path('Sons/background-_win_.wav'))
             pygame.mixer.music.play(-1)
             pygame.time.delay(500)
             estado = 'Vitoria'
@@ -302,7 +302,7 @@ while running:
                 vidas -= 1
         # desenha vidas (carregar imagem a cada alteração é ok, mas vamos tentar cache simples)
         if vidas:
-            imagem_vidas = pygame.image.load(f'Sprites/vidas{vidas}.png').convert_alpha()
+            imagem_vidas = pygame.image.load(resource_path(f'Sprites/vidas{vidas}.png')).convert_alpha()
             rect_imagem = imagem_vidas.get_rect()
             rect_imagem.bottomright = (LARGURA - 40, 85)
             tela.blit(imagem_vidas, rect_imagem)
@@ -310,7 +310,7 @@ while running:
             # Para a música de ação e toca a de derrota
             time.sleep(1)  # Pequena pausa antes de mudar de estado
             pygame.mixer.music.stop()
-            pygame.mixer.music.load('Sons/background-_game-over_.wav') # Ajuste o caminho se necessário
+            pygame.mixer.music.load(resource_path('Sons/background-_game-over_.wav')) # Ajuste o caminho se necessário
             pygame.mixer.music.play(-1)
             estado = 'Derrota'
             opcao = 0
@@ -350,7 +350,7 @@ while running:
                     # muda cenário (indicação: cenario = indice_fase + 1)
                     cenario = indice_fase + 1
                     # tenta carregar o novo fundo (se falhar, mantém o anterior)
-                    imagem_fundo = pygame.image.load(f'Telas/tela{cenario}.png').convert()
+                    imagem_fundo = pygame.image.load(resource_path(f'Telas/tela{cenario}.png')).convert()
                 else:
                     # vitória completa
                     if not em_camera_lenta:

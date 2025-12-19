@@ -1,10 +1,11 @@
 import pygame
+from utils import resource_path
 class Gato(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.walk_sprites = []
         for i in range(1,3):
-            self.walk_sprites.append(pygame.image.load(f'Sprites/gato_{i}.png'))
+            self.walk_sprites.append(pygame.image.load(resource_path(f'Sprites/gato_{i}.png')))
         self.current_sprite = 0
         self.animation_speed = 0.15
         self.flip = False

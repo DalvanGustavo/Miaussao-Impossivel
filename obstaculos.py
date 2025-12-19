@@ -1,11 +1,12 @@
 import pygame
 import random
+from utils import resource_path
 class Obstaculos(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.imagens = []
         for i in range(1,6):
-            img = pygame.image.load(f'Sprites/obstaculo_{i}.png').convert_alpha()
+            img = pygame.image.load(resource_path(f'Sprites/obstaculo_{i}.png')).convert_alpha()
             if i == 3:
                 img_redimensionada = pygame.transform.scale(img, (250, 150))
             elif i == 4:
